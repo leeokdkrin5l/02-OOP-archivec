@@ -137,6 +137,10 @@ public class SpringAnnotationUtils {
         return haveAnnotation(parameter, RequestBody.class);
     }
 
+    public static boolean isModelAttribute(Parameter parameter) {
+        return haveAnnotation(parameter, ModelAttribute.class);
+    }
+
     public static boolean isPathParam(Parameter parameter) {
         return haveAnnotation(parameter, PathVariable.class);
     }

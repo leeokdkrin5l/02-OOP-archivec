@@ -201,7 +201,8 @@ public class SpringNewDocReader extends AbstractDocReader {
             } else {
                 name = readModelMap(parameter.getType(), classJavaClassMap.get(parameter.getType().getName()));
             }
-
+            if (SpringAnnotationUtils.isModelAttribute(parameter))
+                continue;
             if (SpringAnnotationUtils.isRequestBody(parameter)) {
                 parameterSwagger = new BodyParameter();
                 if (StringUtils.isEmpty(name)) {
