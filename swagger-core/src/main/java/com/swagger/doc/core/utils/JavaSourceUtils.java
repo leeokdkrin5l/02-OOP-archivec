@@ -9,8 +9,10 @@ import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -47,6 +49,12 @@ public class JavaSourceUtils {
                 ParameterizedTypeImpl type = (ParameterizedTypeImpl) parameter.getParameterizedType();
                 packageName = type.getRawType().getPackage().getName();
             }
+           Annotation[] annotations =  parameter.getAnnotations();
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof SessionAttribute){
+                    return true;
+                }
+            }
             for (String s : skipPackage) {
                 if (packageName.indexOf(s) >= 0)
                     return true;
@@ -72,6 +80,10 @@ public class JavaSourceUtils {
      * @param javaClass
      */
     public static void readClassFieldDoc(Model model, JavaClass javaClass) {
+        if (model == null)
+            return;
+        if (model.getProperties() == null)
+            return;
         for (Map.Entry<String, Property> stringPropertyEntry : model.getProperties().entrySet()) {
             JavaField javaField = javaClass.getFieldByName(stringPropertyEntry.getKey());
             if (javaField == null)

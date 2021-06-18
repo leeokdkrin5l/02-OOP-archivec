@@ -289,7 +289,7 @@ public class SpringNewDocReader extends AbstractDocReader {
         if (rawType.equals(List.class)) {
             for (Type type : parameterizedType.getActualTypeArguments()) {
                 if (type instanceof ParameterizedTypeImpl) {
-                    readType(typeImpl);
+                    readType(type);
                 } else {
                     readModelMap(type, classJavaClassMap.get(type.getTypeName()));
                 }
@@ -370,6 +370,10 @@ public class SpringNewDocReader extends AbstractDocReader {
     }
 
     private void treeProcess(Map<String, Property> propertyMap, String k) {
+        if (propertyMap == null) {
+            logger.warn("treeProcess propertyMap is null {}", k);
+            return;
+        }
         for (Map.Entry<String, Property> stringPropertyEntry : propertyMap.entrySet()) {
             if (stringPropertyEntry.getValue() instanceof ArrayProperty) {
                 ArrayProperty arrayProperty = (ArrayProperty) stringPropertyEntry.getValue();
