@@ -1,6 +1,5 @@
 package com.swagger.doc.core.utils;
 
-import com.swagger.doc.core.entity.MethodDesc;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
@@ -14,7 +13,6 @@ import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,25 +125,6 @@ public class JavaSourceUtils {
             }
         }
         return mapMap;
-    }
-
-    public static String readJavaMethodParamDesc(MethodDesc javaMethod, String name) {
-        Map<String, Map<String, String>> data = javaMethod.getParamsDesc();
-        Map<String, String> paramMap = data.get(PARAM);
-        String desc = "";
-        if (paramMap != null) {
-            desc = paramMap.getOrDefault(name, "");
-        }
-        return desc;
-    }
-
-    public static Class getSingleParameterClass(Type type) {
-        if (type instanceof ParameterizedTypeImpl) {
-            ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
-            if (((ParameterizedTypeImpl) type).getActualTypeArguments().length > 0)
-                return (Class) ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
-        }
-        return null;
     }
 
 }

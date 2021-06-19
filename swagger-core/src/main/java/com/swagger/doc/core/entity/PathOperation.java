@@ -7,7 +7,7 @@ import io.swagger.models.Operation;
  * User: wk
  * Date: 2017-05-02 下午5:33
  */
-public class PathOperation {
+public class PathOperation  extends BaseEntity{
     private String    hrefPath;
     private Operation operation;
     private String realPath;

@@ -1,15 +1,10 @@
 package com.swagger.doc.core.utils;
 
-import com.swagger.doc.core.entity.MethodDesc;
 import com.swagger.doc.core.entity.RequestMappingInfo;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -168,61 +163,5 @@ public class SpringAnnotationUtils {
         }
         return path;
 
-    }
-
-    /**
-     *
-     * @param clazz
-     * @return
-     */
-    public static List<MethodDesc> getRequestMappingMethod(Class clazz, JavaClass javaClass) {
-        List<MethodDesc> methodDescList = new ArrayList<>();
-        Map<String, MethodDesc> methodMap = new HashMap<>();
-        Method methods[] = clazz.getMethods();
-        for (Method method : methods) {
-            RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-            if (requestMapping == null)
-                continue;
-            MethodDesc methodDesc = new MethodDesc();
-            methodDesc.setMethod(method);
-            methodDesc.setRequestMapping(requestMapping);
-            methodDesc.setName(method.getName());
-            //todo 目前暂时不支持多态，同一个方法名字 不同参数的情况不支持
-            methodMap.put(method.getName(), methodDesc);
-        }
-        for (JavaMethod javaMethod : javaClass.getMethods()) {
-            String name = javaMethod.getName();
-            MethodDesc methodDesc = methodMap.get(name);
-            if (methodDesc == null) {
-                logger.warn("method {} is not exists", name);
-                continue;
-            }
-            methodDesc.setMethodDesc(javaMethod.getComment());
-            methodDesc.setJavaMethod(javaMethod);
-            List<DocletTag> docletTagList = javaMethod.getTags();
-            if (!CollectionUtils.isEmpty(docletTagList)) {
-                for (DocletTag docletTag : docletTagList) {
-                    Map<String, Map<String, String>> mapMap = methodDesc.getParamsDesc();
-                    Map<String, String> data = mapMap.get(docletTag.getName());
-                    if (data == null)
-                        data = new HashMap<>();
-                    mapMap.put(docletTag.getName(), data);
-                    String value = docletTag.getValue();
-                    //如果为空 那么就设置key和value都为空
-                    if (StringUtils.isEmpty(value)) {
-                        data.put("", "");
-                    } else {
-                        List<String> map = docletTag.getParameters();
-                        String msg = "";
-                        for (int i = 1; i < map.size(); i++) {
-                            msg += map.get(i);
-                        }
-                        data.put(map.get(0), msg);
-                    }
-                }
-            }
-            methodDescList.add(methodDesc);
-        }
-        return methodDescList;
     }
 }

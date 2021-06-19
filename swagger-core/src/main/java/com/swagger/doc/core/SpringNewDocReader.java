@@ -145,7 +145,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
-                logger.info("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
+                logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
             }
 
@@ -283,9 +283,6 @@ public class SpringNewDocReader extends AbstractDocReader {
         ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) typeImpl;
         Class rawType = parameterizedType.getRawType();
         Map<String, Type> stringClassMap = new HashMap<>();
-        //       logger.info(typeImpl.getTypeName());
-        //        if (stringModelMap.isEmpty())
-        //            return "";
         if (rawType.equals(List.class)) {
             for (Type type : parameterizedType.getActualTypeArguments()) {
                 if (type instanceof ParameterizedTypeImpl) {
@@ -295,7 +292,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                 }
             }
         } else if (rawType.equals(Map.class)) {
-            logger.info("map");
+            logger.debug("map");
         } else {
             javaClass = classJavaClassMap.get(rawType.getName());
             TypeVariable<Class>[] typeVariables = rawType.getTypeParameters();
@@ -351,22 +348,13 @@ public class SpringNewDocReader extends AbstractDocReader {
                         e.printStackTrace();
                     }
 
-                    logger.info("array");
+                    logger.debug("array");
                 } else if (stringModelEntry.getValue() instanceof MapProperty) {
-                    logger.info("map");
+                    logger.debug("map");
                 }
             }
         }
         return name;
-        //        ParameterizedTypeImpl type = (ParameterizedTypeImpl) typeImpl;
-        //        for (Type typeChild : type.getActualTypeArguments()) {
-        //            if (typeChild instanceof ParameterizedTypeImpl)
-        //                readType(typeChild);
-        //            else {
-        //                readModelMap(typeChild, classJavaClassMap.get(((Class) typeChild).getName()));
-        //            }
-        //        }
-        //        return name;
     }
 
     private void treeProcess(Map<String, Property> propertyMap, String k) {
@@ -415,7 +403,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     if (v1 instanceof ArrayProperty) {
                         //如果list里面的item是对象
                         if (((ArrayProperty) v1).getItems() instanceof RefProperty) {
-                            logger.info(v1.toString());
+                            logger.debug(v1.toString());
                             try {
                                 Field field = ((Class) (targetClass)).getDeclaredField(v1.getName());
                                 Type type = field.getGenericType();
@@ -430,7 +418,7 @@ public class SpringNewDocReader extends AbstractDocReader {
 
                             }
                         }
-                        logger.info(v1.toString());
+                        logger.debug(v1.toString());
                     } else if (v1 instanceof RefProperty) {
                         try {
                             Type realClass = ((Class) targetClass).getDeclaredField(v1.getName()).getGenericType();
@@ -438,7 +426,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                         } catch (NoSuchFieldException e) {
                             e.printStackTrace();
                         }
-                        logger.info(v1.toString());
+                        logger.debug(v1.toString());
                     } else if (v1 instanceof MapProperty) {
                         Class target = (Class) targetClass;
                         try {
@@ -456,7 +444,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                         } catch (NoSuchFieldException e) {
                             e.printStackTrace();
                         }
-                        logger.info(v1.toString());
+                        logger.debug(v1.toString());
                     }
                 });
             });
