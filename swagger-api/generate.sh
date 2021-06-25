@@ -1,1 +1,0 @@
-mvn clean -U process-resources
