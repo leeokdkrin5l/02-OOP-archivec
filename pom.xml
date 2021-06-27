@@ -9,9 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>swagger-api</module>
         <module>swagger-core</module>
-        <module>swagger-parent</module>
+        <module>sample/swagger-doc-demo</module>
     </modules>
 
 
