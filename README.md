@@ -73,8 +73,40 @@ public class SwaggerController {
 
 ```
 需要自己去定义返回的controller，(目前版本不是正式版，方式有些粗暴 请见谅)
-###4. 搭建swagger-ui
+
+###4. 打包源码
+
+这里是最重要的一点，因为java编译后会把doc擦除，这就是为什么class文件里面很少能看见注释，所以需要利用源码来进行解析,所以需要使用maven插件
+```xml
+
+ <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-source-plugin</artifactId>
+    <version>3.0.1</version>
+    <executions>
+        <execution>
+            <id>attach-sources</id>
+            <goals>
+                <goal>jar-no-fork</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+打包时把源码拷贝到source中
+
+```shell
+
+#!/usr/bin/env bash
+mvn clean -U process-resources package -Dmaven.test.skip=true
+cp target/swagger-doc-demo-1.0-SNAPSHOT.jar  source
+
+```
+###5. 搭建swagger-ui
 下载最新版swagger-ui
 
 https://github.com/swagger-api/swagger-ui
+
+
+总体来说使用方式很简单，上面的quickstart仅仅只用于单模块项目，也就是说dto跟api在同一个项目里面，多模块复杂项目会在接下俩的文档里面继续讲解
 
