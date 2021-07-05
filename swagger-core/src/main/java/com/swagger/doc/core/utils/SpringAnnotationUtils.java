@@ -161,7 +161,7 @@ public class SpringAnnotationUtils {
             if (paths.length > 0)
                 path = paths[0];
         }
-        return path;
+        return path==null?"":path;
 
     }
 }
