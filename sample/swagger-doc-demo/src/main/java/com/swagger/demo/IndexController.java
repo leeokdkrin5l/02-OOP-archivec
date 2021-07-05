@@ -3,6 +3,8 @@ package com.swagger.demo;
 import com.swagger.demo.dto.DemoDto;
 import com.swagger.demo.dto.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -14,8 +16,24 @@ import java.util.List;
  */
 @RestController
 public class IndexController {
+    /**
+     * test 接口
+     * @param page 页数
+     * @param size 当前size
+     * @return
+     */
     @GetMapping("/test")
-    public ResponseEntity<List<DemoDto>> test() {
+    public ResponseEntity<List<DemoDto>> test(int page, int size) {
         return ResponseEntity.success();
+    }
+
+    /**
+     * demo 接口
+     * @param demoDto
+     * @return
+     */
+    @PostMapping("/demo")
+    public ResponseEntity<String> demo(@RequestBody DemoDto demoDto) {
+        return ResponseEntity.success("demo");
     }
 }
