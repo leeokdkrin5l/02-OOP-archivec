@@ -11,12 +11,6 @@
     <artifactId>swagger-core</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <distributionManagement>
-        <repository>
-            <id>libs-snapshot</id>
-            <url>http://artifactory.intra.xiaojukeji.com:80/artifactory/libs-snapshot</url>
-        </repository>
-    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>io.swagger</groupId>
