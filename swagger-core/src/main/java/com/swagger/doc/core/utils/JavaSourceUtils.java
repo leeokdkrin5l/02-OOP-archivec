@@ -33,10 +33,6 @@ public class JavaSourceUtils {
         skipPackage.add("org.springframework");
     }
 
-    public static void addSkip(String packageName) {
-        skipPackage.add(packageName);
-    }
-
     public static boolean isSkip(Parameter parameter) {
         String packageName = "";
         try {
@@ -47,9 +43,9 @@ public class JavaSourceUtils {
                 ParameterizedTypeImpl type = (ParameterizedTypeImpl) parameter.getParameterizedType();
                 packageName = type.getRawType().getPackage().getName();
             }
-           Annotation[] annotations =  parameter.getAnnotations();
+            Annotation[] annotations = parameter.getAnnotations();
             for (Annotation annotation : annotations) {
-                if (annotation instanceof SessionAttribute){
+                if (annotation instanceof SessionAttribute) {
                     return true;
                 }
             }

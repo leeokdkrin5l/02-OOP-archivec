@@ -61,10 +61,10 @@ public class SpringNewDocReader extends AbstractDocReader {
     private Map<String, JavaClass> classJavaClassMap;
 
     @Override
-    public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext,
-                        List<String> ingnoreController) {
+    public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
         this.classJavaClassMap = classJavaClassMap;
-        readControllerList(classJavaClassMap, configurableApplicationContext, ingnoreController);
+        List<String> ignoreController = new ArrayList<>();
+        readControllerList(classJavaClassMap, configurableApplicationContext, ignoreController);
         return swagger;
     }
 
@@ -302,7 +302,6 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
         }
         for (Map.Entry<String, Model> stringModelEntry : stringModelMap.entrySet()) {
-            //TODO 拿到类对应的字段注解
             swagger.addDefinition(stringModelEntry.getKey(), stringModelEntry.getValue());
             if (javaClass != null)
                 JavaSourceUtils.readClassFieldDoc(stringModelEntry.getValue(), javaClass);
@@ -409,7 +408,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                                 Type type = field.getGenericType();
                                 if (type instanceof ParameterizedTypeImpl) {
                                     ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
-                                    logger.info("#############{}",
+                                    logger.debug("#############{}",
                                         parameterizedType.getActualTypeArguments()[0].getTypeName());
                                     readModelMap(parameterizedType.getActualTypeArguments()[0], classJavaClassMap
                                         .get(parameterizedType.getActualTypeArguments()[0].getTypeName()));

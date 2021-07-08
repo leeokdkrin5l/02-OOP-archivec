@@ -22,8 +22,7 @@ public class SwaggerController {
     @GetMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String wrapSwagger() {
         if (wrapSwagger == null) {
-            wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce(),
-                Arrays.asList("basicErrorController", "swaggerController"));
+            wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce());
         }
 
         return BeanJsonConversionUtil.beanConversionJson(wrapSwagger);

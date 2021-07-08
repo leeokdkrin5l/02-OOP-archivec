@@ -38,8 +38,7 @@ import static springfox.documentation.schema.Types.typeNameFor;
 public class SwaggerUtils {
     private static final TypeResolver typeResolver = new TypeResolver();
 
-    public static WrapSwagger parseJarSource(String source_dir, ApplicationContext configurableApplicationContext,
-                                             List<String> ingnoreController) {
+    public static WrapSwagger parseJarSource(String source_dir, ApplicationContext configurableApplicationContext) {
         File file = new File(source_dir);
         File files[] = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();
@@ -56,8 +55,7 @@ public class SwaggerUtils {
                 }
             }
         Map<String, JavaClass> javaClassMap = SourceReader.transforJavaClass(javaClassList);
-        Swagger swagger = new SpringNewDocReader(new Swagger()).read(javaClassMap, configurableApplicationContext,
-            ingnoreController);
+        Swagger swagger = new SpringNewDocReader(new Swagger()).read(javaClassMap, configurableApplicationContext);
         WrapSwagger wrapSwagger = new WrapSwagger();
         BeanUtils.copyProperties(swagger, wrapSwagger);
         wrapSwagger.process();

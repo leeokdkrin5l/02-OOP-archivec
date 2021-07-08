@@ -17,17 +17,28 @@ import java.util.stream.Collectors;
  Date: 2017-03-24 下午4:33
  */
 public class SourceReader {
+    private SourceReader() {
+    }
+
     public static List<JavaClass> readFile(File file) throws IOException {
         SortedClassLibraryBuilder classLibraryBuilder = new SortedClassLibraryBuilder();
         classLibraryBuilder.appendDefaultClassLoaders();
         JarFile jarFile = new JarFile(file);
-        List<JarEntry> entryList = Collections.list(jarFile.entries()).stream()
-            .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".java")).collect(Collectors.toList());
-        for (JarEntry jarEntry : entryList) {
-            try (InputStream in = jarFile.getInputStream(jarEntry)) {
-                classLibraryBuilder.addSource(in);
+        try {
+            List<JarEntry> entryList = Collections.list(jarFile.entries()).stream()
+                .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".java"))
+                .collect(Collectors.toList());
+            for (JarEntry jarEntry : entryList) {
+                try (InputStream in = jarFile.getInputStream(jarEntry)) {
+                    classLibraryBuilder.addSource(in);
+                }
             }
+        } catch (Exception e) {
+
+        } finally {
+            jarFile.close();
         }
+
         return new ArrayList<>(classLibraryBuilder.getClassLibrary().getJavaClasses());
     }
 

@@ -1,10 +1,12 @@
 package com.swagger.demo;
 
+import com.swagger.doc.core.entity.SwaggerDoc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.Arrays;
@@ -36,5 +38,11 @@ public class SampleApplication extends WebMvcConfigurationSupport {
         filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
         filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public SwaggerDoc swaggerDoc() {
+        return new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).withDoc("doc")
+            .withHost("139.224.35.224").addIgnoreControllers("swaggerController").build();
     }
 }
