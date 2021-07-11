@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
  Date: 2017-03-23 下午7:07
  */
 public abstract class AbstractDocReader {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected Swagger    swagger;
 
     public abstract Swagger read(Map<String, JavaClass> classJavaClassMap,

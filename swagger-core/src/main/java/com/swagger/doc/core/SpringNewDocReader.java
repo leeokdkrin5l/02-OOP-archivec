@@ -1,6 +1,7 @@
 package com.swagger.doc.core;
 
 import com.swagger.doc.core.entity.RequestMappingInfo;
+import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SpringAnnotationUtils;
 import com.thoughtworks.qdox.model.DocletTag;
@@ -26,8 +27,6 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.refs.GenericRef;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -51,19 +50,19 @@ import java.util.Map;
  * Date: 2017-05-02 上午9:47
  */
 public class SpringNewDocReader extends AbstractDocReader {
-    protected Logger logger = LoggerFactory.getLogger(SpringNewDocReader.class);
-
     public SpringNewDocReader(Swagger swagger) {
         super(swagger);
     }
 
     private static ModelConverters modelConverters = new ModelConverters();
     private Map<String, JavaClass> classJavaClassMap;
+    private SwaggerDoc             swaggerDoc;
 
     @Override
     public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
         this.classJavaClassMap = classJavaClassMap;
-        List<String> ignoreController = new ArrayList<>();
+        this.swaggerDoc = getSwaggerDoc(configurableApplicationContext);
+        List<String> ignoreController = swaggerDoc.getIgnoreControllers();
         readControllerList(classJavaClassMap, configurableApplicationContext, ignoreController);
         return swagger;
     }
