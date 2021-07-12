@@ -1,13 +1,14 @@
 package com.swagger.doc.core.utils;
 
+import com.swagger.doc.core.entity.SwaggerDoc;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -33,9 +34,26 @@ public class JavaSourceUtils {
         skipPackage.add("org.springframework");
     }
 
-    public static boolean isSkip(Parameter parameter) {
+    public static String getJavaClassDoc(JavaClass javaClass, String tag) {
+        String doc = "";
+        if (javaClass == null || CollectionUtils.isEmpty(javaClass.getTags()))
+            return doc;
+        for (DocletTag docletTag : javaClass.getTags()) {
+            if (StringUtils.equals(docletTag.getName(), tag)) {
+                for (String s : docletTag.getParameters()) {
+                    doc += s;
+                    break;
+                }
+            }
+        }
+        return doc;
+    }
+
+    public static boolean isSkip(Parameter parameter, SwaggerDoc swaggerDoc) {
         String packageName = "";
         try {
+            if (swaggerDoc.getIgnoreParamNames().contains(parameter.getName()))
+                return true;
             if (parameter.getParameterizedType() instanceof Class) {
                 Class clazz = (Class) parameter.getParameterizedType();
                 packageName = clazz.getPackage().getName();

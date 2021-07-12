@@ -1,7 +1,5 @@
 package com.swagger.doc.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import com.swagger.doc.core.entity.SwaggerDoc;
@@ -20,8 +18,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
  Date: 2017-03-23 下午7:07
  */
 public abstract class AbstractDocReader {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    protected Swagger    swagger;
+    protected final Logger           logger = LoggerFactory.getLogger(getClass());
+    protected Swagger                swagger;
+    protected Map<String, JavaClass> javaClassMap;
 
     public abstract Swagger read(Map<String, JavaClass> classJavaClassMap,
                                  ApplicationContext configurableApplicationContext);

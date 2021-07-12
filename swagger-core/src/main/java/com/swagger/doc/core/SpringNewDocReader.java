@@ -62,33 +62,30 @@ public class SpringNewDocReader extends AbstractDocReader {
     public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
         this.classJavaClassMap = classJavaClassMap;
         this.swaggerDoc = getSwaggerDoc(configurableApplicationContext);
+        this.javaClassMap = classJavaClassMap;
         List<String> ignoreController = swaggerDoc.getIgnoreControllers();
-        readControllerList(classJavaClassMap, configurableApplicationContext, ignoreController);
+        readControllerList(configurableApplicationContext, ignoreController);
+        fixSwagger();
         return swagger;
     }
 
-    private void readControllerList(Map<String, JavaClass> classJavaClassMap,
-                                    ApplicationContext configurableApplicationContext, List<String> ingnoreController) {
+    private void fixSwagger() {
+        swagger.setBasePath(swaggerDoc.getBasePath());
+        swagger.setInfo(swaggerDoc.getInfo());
+        swagger.setHost(swaggerDoc.getHost());
+    }
+
+    private void readControllerList(ApplicationContext configurableApplicationContext, List<String> ingnoreController) {
         Map<String, Object> objectMap = configurableApplicationContext.getBeansWithAnnotation(Controller.class);
         if (!CollectionUtils.isEmpty(ingnoreController)) {
             for (String s : ingnoreController) {
                 objectMap.remove(s);
             }
         }
-        for (Map.Entry<String, Object> stringObjectEntry : objectMap.entrySet()) {
-            Class clazz = stringObjectEntry.getValue().getClass();
+        for (Map.Entry<String, Object> controllerEntry : objectMap.entrySet()) {
+            Class clazz = controllerEntry.getValue().getClass();
             JavaClass javaClass = classJavaClassMap.get(clazz.getName());
-            String doc = "";
-            if (javaClass != null) {
-                for (DocletTag docletTag : javaClass.getTags()) {
-                    if (docletTag.getName().equals("desc")) {
-                        for (String s : docletTag.getParameters()) {
-                            doc += s;
-                            break;
-                        }
-                    }
-                }
-            }
+            String doc = JavaSourceUtils.getJavaClassDoc(javaClass, "desc");
             processMethod(clazz, javaClass);
             Tag tag = new Tag();
             tag.setName(clazz.getSimpleName());
@@ -180,19 +177,15 @@ public class SpringNewDocReader extends AbstractDocReader {
      */
     private List<Parameter> processParameter(Method method, JavaMethod javaMethod) {
         List<Parameter> parameterList = new ArrayList<>();
-        if (javaMethod == null)
-            return parameterList;
-
         Map<Integer, String> paraMaterNameMap = new HashMap<>();
-        if (javaMethod != null) {
-            for (int i = 0; i < javaMethod.getParameters().size(); i++) {
-                paraMaterNameMap.put(i, javaMethod.getParameters().get(i).getName());
-            }
+        for (int i = 0; i < method.getParameters().length; i++) {
+            paraMaterNameMap.put(i, method.getParameters()[i].getName());
         }
         for (int i = 0; i < method.getParameters().length; i++) {
             Parameter parameterSwagger = null;
             java.lang.reflect.Parameter parameter = method.getParameters()[i];
-            if (JavaSourceUtils.isSkip(parameter))
+            //判断这个参数是否需要跳过
+            if (JavaSourceUtils.isSkip(parameter, swaggerDoc))
                 continue;
             String name = null;
             if (!(parameter.getParameterizedType() instanceof Class)) {
@@ -200,23 +193,26 @@ public class SpringNewDocReader extends AbstractDocReader {
             } else {
                 name = readModelMap(parameter.getType(), classJavaClassMap.get(parameter.getType().getName()));
             }
-            if (SpringAnnotationUtils.isModelAttribute(parameter))
-                continue;
+            //判断该参数是否是body对象
             if (SpringAnnotationUtils.isRequestBody(parameter)) {
+                if (StringUtils.isEmpty(name))
+                    throw new IllegalArgumentException(String.format(" method %s paramater %s can not use @RequestBody",
+                        method.getName(), parameter.getName()));
                 parameterSwagger = new BodyParameter();
-                if (StringUtils.isEmpty(name)) {
-                    parameterSwagger = new QueryParameter();
-                    QueryParameter queryParameter = (QueryParameter) parameterSwagger;
-                    queryParameter.setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
-                    queryParameter.setName(paraMaterNameMap.get(i));
-                } else {
-                    RefModel refModel = new RefModel();
-                    refModel.set$ref("#/definitions/" + name);
-                    parameterSwagger.setName(paraMaterNameMap.get(i));
-                    ((BodyParameter) parameterSwagger).setSchema(refModel);
-                }
+                //                if (StringUtils.isEmpty(name)) {
+                //                    parameterSwagger = new QueryParameter();
+                //                    QueryParameter queryParameter = (QueryParameter) parameterSwagger;
+                //                    queryParameter.setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
+                //                    queryParameter.setName(paraMaterNameMap.get(i));
+                //                } else {
+                RefModel refModel = new RefModel();
+                refModel.set$ref("#/definitions/" + name);
+                parameterSwagger.setName(paraMaterNameMap.get(i));
+                ((BodyParameter) parameterSwagger).setSchema(refModel);
+                //                }
 
             } else {
+                //如果是path param
                 if (SpringAnnotationUtils.isPathParam(parameter)) {
                     parameterSwagger = new PathParameter();
                     ((PathParameter) parameterSwagger)

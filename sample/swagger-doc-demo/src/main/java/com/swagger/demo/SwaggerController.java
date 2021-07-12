@@ -1,6 +1,5 @@
 package com.swagger.demo;
 
-import java.util.Arrays;
 
 import com.swagger.doc.core.utils.BeanJsonConversionUtil;
 import org.springframework.http.MediaType;
@@ -21,9 +20,9 @@ public class SwaggerController {
 
     @GetMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String wrapSwagger() {
-        if (wrapSwagger == null) {
+//        if (wrapSwagger == null) {
             wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce());
-        }
+//        }
 
         return BeanJsonConversionUtil.beanConversionJson(wrapSwagger);
     }
