@@ -1,6 +1,6 @@
 #swagger-doc 
 ##重点先说说这个项目解决了什么问题
-这个项目跟swagger有着很大的联系，总得来说是给swagger解决了大部分人不想用swagger的问题，污染代码。大家可以来看看这是我之前用swagger的时候的代码
+这个总得来说是给swagger解决了大部分人不想用swagger的问题，springfox的注解污染代码，可以来看看用springfox时候的代码
 
 ```java
 
@@ -34,6 +34,14 @@ public ResponseEntity<PageResponse> selectLike(@Valid QueryParam querParam) {
 
 对比两种使用方式，我想大多数人都会喜欢下面一种方式，因为doc是大部分代码种不可少的东西，我理解的是如果大家在写javadoc的同时顺便把文档也写完了，是不是提高了很好的效率
 所以就有此项目诞生
+
+###优点缺点对比
+
+| 项目 | 代码污染 | 学习成本 | 支持springboot | 功能完善程度 |
+| ------------- |:-------------:| -----:| -----:| -----:|
+| swagger-doc | java原生注解即可 | 低 | 支持| 目前功能比较少|
+| springfox | 污染比较大 | 高 | 支持 | 完善 |
+
 
 ##快速开始
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,5 +36,10 @@ public class IndexController {
     @PostMapping("/demo")
     public ResponseEntity<String> demo(@RequestBody DemoDto demoDto) {
         return ResponseEntity.success("demo");
+    }
+
+    @GetMapping("/map")
+    public Map mapTest() {
+        return null;
     }
 }

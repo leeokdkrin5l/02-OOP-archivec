@@ -4,7 +4,6 @@ import com.swagger.doc.core.entity.RequestMappingInfo;
 import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SpringAnnotationUtils;
-import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
@@ -178,9 +177,16 @@ public class SpringNewDocReader extends AbstractDocReader {
     private List<Parameter> processParameter(Method method, JavaMethod javaMethod) {
         List<Parameter> parameterList = new ArrayList<>();
         Map<Integer, String> paraMaterNameMap = new HashMap<>();
-        for (int i = 0; i < method.getParameters().length; i++) {
-            paraMaterNameMap.put(i, method.getParameters()[i].getName());
+        if (javaMethod != null) {
+            for (int i = 0; i < javaMethod.getParameters().size(); i++) {
+                paraMaterNameMap.put(i, javaMethod.getParameters().get(i).getName());
+            }
+        } else {
+            for (int i = 0; i < method.getParameters().length; i++) {
+                paraMaterNameMap.put(i, method.getParameters()[i].getName());
+            }
         }
+
         for (int i = 0; i < method.getParameters().length; i++) {
             Parameter parameterSwagger = null;
             java.lang.reflect.Parameter parameter = method.getParameters()[i];
@@ -199,17 +205,10 @@ public class SpringNewDocReader extends AbstractDocReader {
                     throw new IllegalArgumentException(String.format(" method %s paramater %s can not use @RequestBody",
                         method.getName(), parameter.getName()));
                 parameterSwagger = new BodyParameter();
-                //                if (StringUtils.isEmpty(name)) {
-                //                    parameterSwagger = new QueryParameter();
-                //                    QueryParameter queryParameter = (QueryParameter) parameterSwagger;
-                //                    queryParameter.setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
-                //                    queryParameter.setName(paraMaterNameMap.get(i));
-                //                } else {
                 RefModel refModel = new RefModel();
                 refModel.set$ref("#/definitions/" + name);
                 parameterSwagger.setName(paraMaterNameMap.get(i));
                 ((BodyParameter) parameterSwagger).setSchema(refModel);
-                //                }
 
             } else {
                 //如果是path param
@@ -224,6 +223,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     }
                 } else {
                     Map<String, Model> parameterMap = modelConverters.read(parameter.getParameterizedType());
+                    //如果为空说明是正常的类型 就直接采用基本类型字段
                     if (parameterMap.isEmpty()) {
                         parameterSwagger = new QueryParameter();
                         QueryParameter queryParameter = (QueryParameter) parameterSwagger;
@@ -278,12 +278,17 @@ public class SpringNewDocReader extends AbstractDocReader {
         ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) typeImpl;
         Class rawType = parameterizedType.getRawType();
         Map<String, Type> stringClassMap = new HashMap<>();
+        //如果是集合类型
         if (rawType.equals(List.class)) {
-            for (Type type : parameterizedType.getActualTypeArguments()) {
-                if (type instanceof ParameterizedTypeImpl) {
-                    readType(type);
-                } else {
-                    readModelMap(type, classJavaClassMap.get(type.getTypeName()));
+            //并且是带泛型的list
+            if (parameterizedType.getActualTypeArguments() != null
+                && parameterizedType.getActualTypeArguments().length > 0) {
+                for (Type type : parameterizedType.getActualTypeArguments()) {
+                    if (type instanceof ParameterizedTypeImpl) {
+                        readType(type);
+                    } else {
+                        readModelMap(type, classJavaClassMap.get(type.getTypeName()));
+                    }
                 }
             }
         } else if (rawType.equals(Map.class)) {

@@ -5,6 +5,7 @@ import java.util.Map;
 import com.swagger.doc.core.entity.SwaggerDoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 import com.thoughtworks.qdox.model.JavaClass;
@@ -30,7 +31,11 @@ public abstract class AbstractDocReader {
     }
 
     protected SwaggerDoc getSwaggerDoc(ApplicationContext applicationContext) {
-        SwaggerDoc swaggerDoc = applicationContext.getBean(SwaggerDoc.class);
+        SwaggerDoc swaggerDoc = null;
+        try {
+            swaggerDoc = applicationContext.getBean(SwaggerDoc.class);
+        } catch (NoSuchBeanDefinitionException e) {
+        }
         if (swaggerDoc == null) {
             swaggerDoc = new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).build();
         }
