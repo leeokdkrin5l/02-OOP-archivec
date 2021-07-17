@@ -5,9 +5,6 @@ import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.classmate.types.ResolvedArrayType;
 import com.fasterxml.classmate.types.ResolvedObjectType;
 import com.fasterxml.classmate.types.ResolvedPrimitiveType;
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Helper;
-import com.github.jknack.handlebars.helper.StringHelpers;
 import com.swagger.doc.core.SpringNewDocReader;
 import com.swagger.doc.core.entity.WrapSwagger;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -84,51 +81,51 @@ public class SwaggerUtils {
         //        }
     }
 
-    private static void initHandlebars(Handlebars handlebars) {
-        handlebars.registerHelper("ifeq", (Helper<String>) (value, options) -> {
-            if (value == null || options.param(0) == null) {
-                return options.inverse();
-            }
-            if (value.equals(options.param(0))) {
-                return options.fn();
-            }
-            return options.inverse();
-        });
-
-        handlebars.registerHelper("basename", (Helper<String>) (value, options) -> {
-            if (value == null) {
-                return null;
-            }
-            int lastSlash = value.lastIndexOf("/");
-            if (lastSlash == -1) {
-                return value;
-            } else {
-                return value.substring(lastSlash + 1);
-            }
-        });
-        handlebars.registerHelper("lowercase", (Helper<String>) (value, options) -> {
-
-            if (value == null) {
-                return null;
-            }
-            int lastSlash = value.lastIndexOf("/");
-            if (lastSlash == -1) {
-                return value;
-            } else {
-                return value.substring(lastSlash + 1).toLowerCase();
-            }
-        });
-        handlebars.registerHelper("emptyif", (Helper<String>) (value, options) -> {
-
-            if (value == null || value.equals("")) {
-                return "无";
-            }
-            return value;
-        });
-        handlebars.registerHelper(StringHelpers.join.name(), StringHelpers.join);
-        handlebars.registerHelper(StringHelpers.lower.name(), StringHelpers.lower);
-
-    }
+//    private static void initHandlebars(Handlebars handlebars) {
+//        handlebars.registerHelper("ifeq", (Helper<String>) (value, options) -> {
+//            if (value == null || options.param(0) == null) {
+//                return options.inverse();
+//            }
+//            if (value.equals(options.param(0))) {
+//                return options.fn();
+//            }
+//            return options.inverse();
+//        });
+//
+//        handlebars.registerHelper("basename", (Helper<String>) (value, options) -> {
+//            if (value == null) {
+//                return null;
+//            }
+//            int lastSlash = value.lastIndexOf("/");
+//            if (lastSlash == -1) {
+//                return value;
+//            } else {
+//                return value.substring(lastSlash + 1);
+//            }
+//        });
+//        handlebars.registerHelper("lowercase", (Helper<String>) (value, options) -> {
+//
+//            if (value == null) {
+//                return null;
+//            }
+//            int lastSlash = value.lastIndexOf("/");
+//            if (lastSlash == -1) {
+//                return value;
+//            } else {
+//                return value.substring(lastSlash + 1).toLowerCase();
+//            }
+//        });
+//        handlebars.registerHelper("emptyif", (Helper<String>) (value, options) -> {
+//
+//            if (value == null || value.equals("")) {
+//                return "无";
+//            }
+//            return value;
+//        });
+//        handlebars.registerHelper(StringHelpers.join.name(), StringHelpers.join);
+//        handlebars.registerHelper(StringHelpers.lower.name(), StringHelpers.lower);
+//
+//    }
 
     /**
      * 拿到这个类的名称

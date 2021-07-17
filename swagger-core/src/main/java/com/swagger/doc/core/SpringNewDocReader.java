@@ -164,7 +164,6 @@ public class SpringNewDocReader extends AbstractDocReader {
             response.setSchema(properties);
             properties.set$ref("#/definitions/" + name);
         }
-
         return response;
     }
 
@@ -322,7 +321,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                             readType(type);
                         }
                     } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
+                        logger.warn("", e);
                     }
                 } else if (stringPropertyEntry.getValue() instanceof ArrayProperty) {
                     ArrayProperty property = (ArrayProperty) stringPropertyEntry.getValue();
@@ -344,7 +343,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                             readType(type);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.warn("", e);
                     }
 
                     logger.debug("array");
@@ -408,8 +407,6 @@ public class SpringNewDocReader extends AbstractDocReader {
                                 Type type = field.getGenericType();
                                 if (type instanceof ParameterizedTypeImpl) {
                                     ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
-                                    logger.debug("#############{}",
-                                        parameterizedType.getActualTypeArguments()[0].getTypeName());
                                     readModelMap(parameterizedType.getActualTypeArguments()[0], classJavaClassMap
                                         .get(parameterizedType.getActualTypeArguments()[0].getTypeName()));
                                 }
@@ -423,7 +420,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                             Type realClass = ((Class) targetClass).getDeclaredField(v1.getName()).getGenericType();
                             readModelMap(realClass, classJavaClassMap.get(realClass.getTypeName()));
                         } catch (NoSuchFieldException e) {
-                            e.printStackTrace();
+                            logger.warn("", e);
                         }
                         logger.debug(v1.toString());
                     } else if (v1 instanceof MapProperty) {
@@ -441,9 +438,9 @@ public class SpringNewDocReader extends AbstractDocReader {
                                 }
                             }
                         } catch (NoSuchFieldException e) {
+                            logger.warn("", e);
                             e.printStackTrace();
                         }
-                        logger.debug(v1.toString());
                     }
                 });
             });

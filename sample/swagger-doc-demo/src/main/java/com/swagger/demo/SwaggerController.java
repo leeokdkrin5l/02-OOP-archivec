@@ -1,9 +1,9 @@
 package com.swagger.demo;
 
 
-import com.swagger.doc.core.utils.BeanJsonConversionUtil;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swagger.doc.core.entity.WrapSwagger;
@@ -19,12 +19,13 @@ public class SwaggerController {
     private volatile WrapSwagger wrapSwagger;
 
     @GetMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String wrapSwagger() {
+    @ResponseBody
+    public WrapSwagger wrapSwagger() {
 //        if (wrapSwagger == null) {
             wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce());
 //        }
 
-        return BeanJsonConversionUtil.beanConversionJson(wrapSwagger);
+        return wrapSwagger;
     }
 
 }
