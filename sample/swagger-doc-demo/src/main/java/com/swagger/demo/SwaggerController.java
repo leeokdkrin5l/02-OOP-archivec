@@ -1,6 +1,5 @@
 package com.swagger.demo;
 
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,10 +20,7 @@ public class SwaggerController {
     @GetMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public WrapSwagger wrapSwagger() {
-//        if (wrapSwagger == null) {
-            wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce());
-//        }
-
+        wrapSwagger = SwaggerUtils.parseJarSource("source", SampleApplication.getInstalce());
         return wrapSwagger;
     }
 

@@ -1,0 +1,4 @@
+
+### demo 项目里面的SwaggerController 配置了MappingJackson2HttpMessageConverter，把null值过滤掉了，如果仅仅只让SwaggerController过滤null怎么解决
+可以通过gson去把wrapswagger转换成json 然后spring 返回一个string即可
+

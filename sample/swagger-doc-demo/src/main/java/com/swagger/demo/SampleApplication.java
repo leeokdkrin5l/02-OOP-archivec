@@ -3,6 +3,8 @@ package com.swagger.demo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swagger.doc.core.entity.SwaggerDoc;
+import io.swagger.models.Contact;
+import io.swagger.models.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -48,8 +50,17 @@ public class SampleApplication extends WebMvcConfigurerAdapter {
 
     @Bean
     public SwaggerDoc swaggerDoc() {
+        Contact contact = new Contact();
+        Info info = new Info();
+        info.setTitle("测试文档");
+        contact.setEmail("542467660@qq.com");
+        contact.setName("wk");
+        contact.setUrl("http://git.oschina.net/wangkang_daydayup/swagger-doc");
+        info.setDescription("swagger-doc解决了springfox用注解污染代码的问题，采用原生java-doc来实现文档的生成，让代码更加干净，学习成本更低");
+        info.setContact(contact);
         return new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).withDoc("doc")
-            .withHost("139.224.35.224").addIgnoreControllers("swaggerController").build();
+            .withDoc("测试文档").withInfo(info).withHost("139.224.35.224")
+            .addIgnoreControllers("swaggerController", "basicErrorController").build();
     }
 
     @Override

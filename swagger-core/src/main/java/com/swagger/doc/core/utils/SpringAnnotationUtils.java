@@ -1,8 +1,6 @@
 package com.swagger.doc.core.utils;
 
 import com.swagger.doc.core.entity.RequestMappingInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -19,7 +17,6 @@ import java.util.*;
  Date: 2017-03-29 下午7:28
  */
 public class SpringAnnotationUtils {
-    private static final Logger          logger         = LoggerFactory.getLogger(SpringAnnotationUtils.class);
     private static final Set<Annotation> ANNOTATION_SET = new HashSet(Arrays.asList(RequestMapping.class,
         GetMapping.class, PostMapping.class, PutMapping.class, DeleteMapping.class, PatchMapping.class));
 
@@ -109,21 +106,6 @@ public class SpringAnnotationUtils {
     }
 
     /**
-     * 判断是否是get
-     * @param requestMapping
-     * @return
-     */
-    public static boolean isGet(RequestMapping requestMapping) {
-        if (requestMapping.method().length == 0)
-            return true;
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            if (requestMethod == RequestMethod.GET)
-                return true;
-        }
-        return false;
-    }
-
-    /**
      * 判断是否有RequestBody注解
      * @param parameter
      * @return
@@ -132,10 +114,11 @@ public class SpringAnnotationUtils {
         return haveAnnotation(parameter, RequestBody.class);
     }
 
-    public static boolean isModelAttribute(Parameter parameter) {
-        return haveAnnotation(parameter, ModelAttribute.class);
-    }
-
+    /**
+     * 判断是否是pathParam
+     * @param parameter
+     * @return
+     */
     public static boolean isPathParam(Parameter parameter) {
         return haveAnnotation(parameter, PathVariable.class);
     }
@@ -161,7 +144,7 @@ public class SpringAnnotationUtils {
             if (paths.length > 0)
                 path = paths[0];
         }
-        return path==null?"":path;
+        return path == null ? "" : path;
 
     }
 }
