@@ -5,20 +5,14 @@ import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SpringAnnotationUtils;
 import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
-import io.swagger.converter.ModelConverters;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
-import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
@@ -53,7 +47,6 @@ public class SpringNewDocReader extends AbstractDocReader {
         super(swagger);
     }
 
-    private static ModelConverters modelConverters = new ModelConverters();
     private Map<String, JavaClass> classJavaClassMap;
     private SwaggerDoc             swaggerDoc;
 
@@ -61,7 +54,6 @@ public class SpringNewDocReader extends AbstractDocReader {
     public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
         this.classJavaClassMap = classJavaClassMap;
         this.swaggerDoc = getSwaggerDoc(configurableApplicationContext);
-        this.javaClassMap = classJavaClassMap;
         List<String> ignoreController = swaggerDoc.getIgnoreControllers();
         readControllerList(configurableApplicationContext, ignoreController);
         fixSwagger();
@@ -187,7 +179,6 @@ public class SpringNewDocReader extends AbstractDocReader {
         }
 
         for (int i = 0; i < method.getParameters().length; i++) {
-            Parameter parameterSwagger = null;
             java.lang.reflect.Parameter parameter = method.getParameters()[i];
             //判断这个参数是否需要跳过
             if (JavaSourceUtils.isSkip(parameter, swaggerDoc))
@@ -200,66 +191,19 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
             //判断该参数是否是body对象
             if (SpringAnnotationUtils.isRequestBody(parameter)) {
-                if (StringUtils.isEmpty(name))
-                    throw new IllegalArgumentException(String.format(" method %s paramater %s can not use @RequestBody",
-                        method.getName(), parameter.getName()));
-                parameterSwagger = new BodyParameter();
-                RefModel refModel = new RefModel();
-                refModel.set$ref("#/definitions/" + name);
-                parameterSwagger.setName(paraMaterNameMap.get(i));
-                ((BodyParameter) parameterSwagger).setSchema(refModel);
-
+                parameterList.addAll(bodyParse.parseParameter(parameter, javaMethod, method, name,
+                    paraMaterNameMap.get(i), classJavaClassMap));
             } else {
                 //如果是path param
                 if (SpringAnnotationUtils.isPathParam(parameter)) {
-                    parameterSwagger = new PathParameter();
-                    ((PathParameter) parameterSwagger)
-                        .setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
-                    if (javaMethod != null) {
-                        String desc = JavaSourceUtils.readParamDesc(JavaSourceUtils.readJavaMethodParam(javaMethod),
-                            paraMaterNameMap.get(i));
-                        parameterSwagger.setDescription(desc);
-                    }
+                    parameterList.addAll(pathParse.parseParameter(parameter, javaMethod, method, name,
+                        paraMaterNameMap.get(i), classJavaClassMap));
                 } else {
-                    Map<String, Model> parameterMap = modelConverters.read(parameter.getParameterizedType());
-                    //如果为空说明是正常的类型 就直接采用基本类型字段
-                    if (parameterMap.isEmpty()) {
-                        parameterSwagger = new QueryParameter();
-                        QueryParameter queryParameter = (QueryParameter) parameterSwagger;
-                        queryParameter.setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
-                        queryParameter.setName(paraMaterNameMap.get(i));
-                        if (javaMethod != null) {
-                            String desc = JavaSourceUtils.readParamDesc(JavaSourceUtils.readJavaMethodParam(javaMethod),
-                                paraMaterNameMap.get(i));
-                            parameterSwagger.setDescription(desc);
-                        }
-
-                    } else {
-                        for (Map.Entry<String, Model> modelEntry : parameterMap.entrySet()) {
-                            for (Map.Entry<String, Property> stringPropertyEntry : modelEntry.getValue().getProperties()
-                                .entrySet()) {
-                                QueryParameter queryParameter = new QueryParameter();
-                                queryParameter.setProperty(stringPropertyEntry.getValue());
-                                queryParameter.setName(stringPropertyEntry.getKey());
-                                JavaClass javaClass = classJavaClassMap
-                                    .get(((Class) (parameter.getParameterizedType())).getName());
-                                if (javaClass != null) {
-                                    JavaField field = javaClass.getFieldByName(stringPropertyEntry.getKey());
-                                    if (field != null)
-                                        queryParameter.setDescription(field.getComment());
-                                }
-                                parameterList.add(queryParameter);
-
-                            }
-                        }
-                    }
+                    parameterList.addAll(queryParse.parseParameter(parameter, javaMethod, method, name,
+                        paraMaterNameMap.get(i), classJavaClassMap));
                 }
 
             }
-
-            if (parameterSwagger != null)
-                parameterList.add(parameterSwagger);
-
         }
 
         return parameterList;

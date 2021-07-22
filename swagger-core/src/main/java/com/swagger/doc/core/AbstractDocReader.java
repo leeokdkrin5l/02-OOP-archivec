@@ -3,6 +3,11 @@ package com.swagger.doc.core;
 import java.util.Map;
 
 import com.swagger.doc.core.entity.SwaggerDoc;
+import com.swagger.doc.core.param.AbstractParamParse;
+import com.swagger.doc.core.param.BodyParamParse;
+import com.swagger.doc.core.param.PathParamParse;
+import com.swagger.doc.core.param.QueryParamParse;
+import io.swagger.converter.ModelConverters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -19,9 +24,12 @@ import org.springframework.web.bind.annotation.SessionAttribute;
  Date: 2017-03-23 下午7:07
  */
 public abstract class AbstractDocReader {
-    protected final Logger           logger = LoggerFactory.getLogger(getClass());
+    protected final Logger           logger          = LoggerFactory.getLogger(getClass());
     protected Swagger                swagger;
-    protected Map<String, JavaClass> javaClassMap;
+    protected static ModelConverters modelConverters = new ModelConverters();
+    protected AbstractParamParse     bodyParse       = new BodyParamParse(modelConverters);
+    protected AbstractParamParse     pathParse       = new PathParamParse(modelConverters);
+    protected AbstractParamParse     queryParse      = new QueryParamParse(modelConverters);
 
     public abstract Swagger read(Map<String, JavaClass> classJavaClassMap,
                                  ApplicationContext configurableApplicationContext);
