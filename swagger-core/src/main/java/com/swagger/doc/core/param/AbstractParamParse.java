@@ -18,7 +18,7 @@ public abstract class AbstractParamParse {
     protected ModelConverters modelConverters;
 
     public AbstractParamParse(ModelConverters modelConverters) {
-        this.modelConverters = new ModelConverters();
+        this.modelConverters = modelConverters;
     }
 
     /**

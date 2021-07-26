@@ -9,8 +9,11 @@ import com.swagger.doc.core.SpringNewDocReader;
 import com.swagger.doc.core.entity.WrapSwagger;
 import com.thoughtworks.qdox.model.JavaClass;
 import io.swagger.models.Swagger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 import springfox.documentation.schema.DefaultGenericTypeNamingStrategy;
 import springfox.documentation.schema.DefaultTypeNameProvider;
 import springfox.documentation.spi.schema.GenericTypeNamingStrategy;
@@ -34,10 +37,14 @@ import static springfox.documentation.schema.Types.typeNameFor;
  */
 public class SwaggerUtils {
     private static final TypeResolver typeResolver = new TypeResolver();
+    private static final Logger       LOGGER       = LoggerFactory.getLogger(SwaggerUtils.class);
 
-    public static WrapSwagger parseJarSource(String source_dir, ApplicationContext configurableApplicationContext) {
-        File file = new File(source_dir);
-        File files[] = file.listFiles();
+    private SwaggerUtils() {
+    }
+
+    public static WrapSwagger parseJarSource(String sourceDir, ApplicationContext configurableApplicationContext) {
+        File file = new File(sourceDir);
+        File[] files = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();
         if (files != null)
             for (File file1 : files) {
@@ -47,7 +54,7 @@ public class SwaggerUtils {
                     List<JavaClass> list = SourceReader.readFile(file1);
                     javaClassList.addAll(list);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.warn("", e);
                     continue;
                 }
             }
@@ -57,75 +64,7 @@ public class SwaggerUtils {
         BeanUtils.copyProperties(swagger, wrapSwagger);
         wrapSwagger.process();
         return wrapSwagger;
-        //        String json = BeanJsonConversionUtil.beanConversionJson(swagger);
-        //        File file1 = new File("swagger.json");
-        //        //        File file2 = new File("markdown.md");
-        //        try {
-        //            //            TemplateLoader loader = new ClassPathTemplateLoader();
-        //            //            loader.setPrefix("");
-        //            //            loader.setSuffix(".hbs");
-        //            //            Handlebars handlebars = new Handlebars(loader);
-        //            //            initHandlebars(handlebars);
-        //            //            Template template = handlebars.compile("markdown");
-        //            //            String content = template.apply(wrapSwagger);
-        //            //            FileWriter fileWriter1 = new FileWriter(file2);
-        //            //            fileWriter1.write(content);
-        //            //            fileWriter1.close();
-        //
-        //            FileWriter fileWriter = new FileWriter(file1);
-        //            fileWriter.write(json);
-        //            fileWriter.flush();
-        //            fileWriter.close();
-        //        } catch (IOException e) {
-        //            e.printStackTrace();
-        //        }
     }
-
-//    private static void initHandlebars(Handlebars handlebars) {
-//        handlebars.registerHelper("ifeq", (Helper<String>) (value, options) -> {
-//            if (value == null || options.param(0) == null) {
-//                return options.inverse();
-//            }
-//            if (value.equals(options.param(0))) {
-//                return options.fn();
-//            }
-//            return options.inverse();
-//        });
-//
-//        handlebars.registerHelper("basename", (Helper<String>) (value, options) -> {
-//            if (value == null) {
-//                return null;
-//            }
-//            int lastSlash = value.lastIndexOf("/");
-//            if (lastSlash == -1) {
-//                return value;
-//            } else {
-//                return value.substring(lastSlash + 1);
-//            }
-//        });
-//        handlebars.registerHelper("lowercase", (Helper<String>) (value, options) -> {
-//
-//            if (value == null) {
-//                return null;
-//            }
-//            int lastSlash = value.lastIndexOf("/");
-//            if (lastSlash == -1) {
-//                return value;
-//            } else {
-//                return value.substring(lastSlash + 1).toLowerCase();
-//            }
-//        });
-//        handlebars.registerHelper("emptyif", (Helper<String>) (value, options) -> {
-//
-//            if (value == null || value.equals("")) {
-//                return "无";
-//            }
-//            return value;
-//        });
-//        handlebars.registerHelper(StringHelpers.join.name(), StringHelpers.join);
-//        handlebars.registerHelper(StringHelpers.lower.name(), StringHelpers.lower);
-//
-//    }
 
     /**
      * 拿到这个类的名称
@@ -141,7 +80,7 @@ public class SwaggerUtils {
     }
 
     private static String innerTypeName(ResolvedType type) {
-        if (type.getTypeParameters().size() > 0 && type.getErasedType().getTypeParameters().length > 0) {
+        if (!CollectionUtils.isEmpty(type.getTypeParameters()) && type.getErasedType().getTypeParameters().length > 0) {
             return genericTypeName(type);
         }
         return simpleTypeName(type);

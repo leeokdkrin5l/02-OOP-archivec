@@ -35,31 +35,34 @@ public class WrapSwagger extends Swagger {
         try {
             List<Tag> tagString = getTags();
             Map<String, Tag> tagMap = tagString.stream()
-                .collect(Collectors.toMap(n -> n.getName(), o -> o, (existingValue, newValue) -> existingValue));
+                .collect(Collectors.toMap(Tag::getName, o -> o, (existingValue, newValue) -> existingValue));
             Map<String, Path> pathMap = getPaths();
             if (pathMap != null)
-                pathMap.forEach((k, v) -> {
-                    for (Operation operation : v.getOperations()) {
-                        List<String> tagsList = operation.getTags();
-                        for (String s : tagsList) {
-                            Tag tag = tagMap.get(s);
-                            if (tag != null) {
-                                List<PathOperation> mapList = tagPath.get(tag);
-                                if (mapList == null)
-                                    mapList = new ArrayList<>();
-                                PathOperation pathOperation = new PathOperation();
-                                pathOperation.setHrefPath(k.replace("/", ""));
-                                pathOperation.setRealPath(k);
-                                pathOperation.setOperation(operation);
-                                mapList.add(pathOperation);
-                                tagPath.put(tag, mapList);
-                            }
-                        }
-                    }
-                });
+                pathMap.forEach((k, v) -> processPath(k, v, tagMap));
         } catch (Exception e) {
             logger.error("", e);
         }
 
     }
+
+    public void processPath(String k, Path v, Map<String, Tag> tagMap) {
+        for (Operation operation : v.getOperations()) {
+            List<String> tagsList = operation.getTags();
+            for (String s : tagsList) {
+                Tag tag = tagMap.get(s);
+                if (tag != null) {
+                    List<PathOperation> mapList = tagPath.get(tag);
+                    if (mapList == null)
+                        mapList = new ArrayList<>();
+                    PathOperation pathOperation = new PathOperation();
+                    pathOperation.setHrefPath(k.replace("/", ""));
+                    pathOperation.setRealPath(k);
+                    pathOperation.setOperation(operation);
+                    mapList.add(pathOperation);
+                    tagPath.put(tag, mapList);
+                }
+            }
+        }
+    }
+
 }

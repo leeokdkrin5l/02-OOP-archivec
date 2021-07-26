@@ -43,6 +43,7 @@ public abstract class AbstractDocReader {
         try {
             swaggerDoc = applicationContext.getBean(SwaggerDoc.class);
         } catch (NoSuchBeanDefinitionException e) {
+            logger.debug("SwaggerDoc not define use default SwaggerDoc");
         }
         if (swaggerDoc == null) {
             swaggerDoc = new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).build();

@@ -43,22 +43,24 @@ public class QueryParamParse extends AbstractParamParse {
             parameterList.add(parameterSwagger);
         } else {
             for (Map.Entry<String, Model> modelEntry : parameterMap.entrySet()) {
-                for (Map.Entry<String, Property> stringPropertyEntry : modelEntry.getValue().getProperties()
-                    .entrySet()) {
-                    QueryParameter queryParameter = new QueryParameter();
-                    queryParameter.setProperty(stringPropertyEntry.getValue());
-                    queryParameter.setName(stringPropertyEntry.getKey());
-                    JavaClass javaClass = classJavaClassMap.get(((Class) (parameter.getParameterizedType())).getName());
-                    if (javaClass != null) {
-                        JavaField field = javaClass.getFieldByName(stringPropertyEntry.getKey());
-                        if (field != null)
-                            queryParameter.setDescription(field.getComment());
-                    }
-                    parameterList.add(queryParameter);
-
-                }
+                modelEntry.getValue().getProperties()
+                    .forEach((k, v) -> parseParamMap(k, v, parameterList, classJavaClassMap, parameter));
             }
         }
         return parameterList;
+    }
+
+    private void parseParamMap(String name, Property property, List<Parameter> parameterList,
+                               Map<String, JavaClass> classJavaClassMap, java.lang.reflect.Parameter parameter) {
+        QueryParameter queryParameter = new QueryParameter();
+        queryParameter.setProperty(property);
+        queryParameter.setName(name);
+        JavaClass javaClass = classJavaClassMap.get(((Class) (parameter.getParameterizedType())).getName());
+        if (javaClass != null) {
+            JavaField field = javaClass.getFieldByName(name);
+            if (field != null)
+                queryParameter.setDescription(field.getComment());
+        }
+        parameterList.add(queryParameter);
     }
 }

@@ -86,7 +86,7 @@ public class SpringNewDocReader extends AbstractDocReader {
     }
 
     private void processMethod(Class clazz, JavaClass javaClass) {
-        Method methods[] = clazz.getMethods();
+        Method[] methods = clazz.getMethods();
         Map<String, JavaMethod> javaMethodMap = JavaSourceUtils.getAllMethod(javaClass);
 
         for (Method method : methods) {
@@ -316,9 +316,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                         if (StringUtils.equals(genericRef.getSimpleRef(), k)) {
                             arrayProperty.setItems(new ObjectProperty());
                         }
-                    } catch (NoSuchFieldException e) {
-                        continue;
-                    } catch (IllegalAccessException e) {
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
                         continue;
                     }
                 }
@@ -334,7 +332,6 @@ public class SpringNewDocReader extends AbstractDocReader {
                 stringBuilder.append(k);
                 treeProcess(v.getProperties(), k);
                 if (swagger.getDefinitions() != null && swagger.getDefinitions().get(k) != null) {
-                    Map<String, Property> propertyMap = swagger.getDefinitions().get(k).getProperties();
                     return;
                 }
                 swagger.addDefinition(k, v);
@@ -355,10 +352,9 @@ public class SpringNewDocReader extends AbstractDocReader {
                                         .get(parameterizedType.getActualTypeArguments()[0].getTypeName()));
                                 }
                             } catch (NoSuchFieldException e) {
-
+                                logger.warn("", e);
                             }
                         }
-                        logger.debug(v1.toString());
                     } else if (v1 instanceof RefProperty) {
                         try {
                             Type realClass = ((Class) targetClass).getDeclaredField(v1.getName()).getGenericType();
@@ -383,7 +379,6 @@ public class SpringNewDocReader extends AbstractDocReader {
                             }
                         } catch (NoSuchFieldException e) {
                             logger.warn("", e);
-                            e.printStackTrace();
                         }
                     }
                 });
