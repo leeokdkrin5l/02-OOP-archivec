@@ -2,6 +2,8 @@ package com.swagger.doc.core.utils;
 
 import com.thoughtworks.qdox.library.SortedClassLibraryBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
  Date: 2017-03-24 下午4:33
  */
 public class SourceReader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceReader.class);
+
     private SourceReader() {
     }
 
@@ -34,7 +38,7 @@ public class SourceReader {
                 }
             }
         } catch (Exception e) {
-
+            LOGGER.warn("", e);
         } finally {
             jarFile.close();
         }

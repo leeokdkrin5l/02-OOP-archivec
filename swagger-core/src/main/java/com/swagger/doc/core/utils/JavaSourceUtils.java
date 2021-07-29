@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
  Date: 2017-03-29 下午7:06
  */
 public class JavaSourceUtils {
-    public final static String        PARAM       = "param";
+    public final static String PARAM = "param";
+
+    private JavaSourceUtils() {
+    }
 
     private final static List<String> skipPackage = new ArrayList<>();
     static {
@@ -82,7 +85,7 @@ public class JavaSourceUtils {
         if (javaClass == null)
             return new HashMap<>();
         return javaClass.getMethods().stream()
-            .collect(Collectors.toMap(m -> m.getName(), m -> m, (existingValue, newValue) -> existingValue));
+            .collect(Collectors.toMap(JavaMethod::getName, m -> m, (existingValue, newValue) -> existingValue));
 
     }
 

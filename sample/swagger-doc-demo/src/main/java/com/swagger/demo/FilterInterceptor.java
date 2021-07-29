@@ -1,5 +1,8 @@
 package com.swagger.demo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -15,9 +18,10 @@ import java.io.IOException;
  * Date: 2017-07-13 下午6:05
  */
 public class FilterInterceptor implements Filter {
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        logger.debug("init");
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
@@ -32,6 +36,7 @@ public class FilterInterceptor implements Filter {
     }
 
     public void destroy() {
+        logger.debug("destory");
 
     }
 }

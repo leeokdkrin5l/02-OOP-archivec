@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
 
 /**
  Created by IntelliJ IDEA.
@@ -17,8 +16,8 @@ import java.util.*;
  Date: 2017-03-29 下午7:28
  */
 public class SpringAnnotationUtils {
-    private static final Set<Annotation> ANNOTATION_SET = new HashSet(Arrays.asList(RequestMapping.class,
-        GetMapping.class, PostMapping.class, PutMapping.class, DeleteMapping.class, PatchMapping.class));
+    private SpringAnnotationUtils() {
+    }
 
     /**
      * 拿到requestMapping INFO
@@ -124,21 +123,21 @@ public class SpringAnnotationUtils {
     }
 
     public static boolean haveAnnotation(Parameter parameter, Class annotationTarget) {
-        Annotation annotations[] = parameter.getAnnotations();
+        Annotation[] annotations = parameter.getAnnotations();
         for (Annotation annotation : annotations) {
-            if (annotation.annotationType().getName().equals(annotationTarget.getName()))
+            if (annotation.annotationType().isAssignableFrom(annotationTarget))
                 return true;
         }
         return false;
     }
 
     public static String getControllerPath(Class clazz) {
-        String path = "";
+        String path;
         Annotation controllerAnnotation = clazz.getAnnotation(Controller.class);
         path = (String) AnnotationUtils.getValue(controllerAnnotation, "value");
         Annotation requestMapping = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
         if (requestMapping != null && StringUtils.isEmpty(path)) {
-            String paths[] = (String[]) AnnotationUtils.getValue(requestMapping, "path");
+            String[] paths = (String[]) AnnotationUtils.getValue(requestMapping, "path");
             if (paths.length < 0)
                 paths = (String[]) AnnotationUtils.getValue(requestMapping, "value");
             if (paths.length > 0)

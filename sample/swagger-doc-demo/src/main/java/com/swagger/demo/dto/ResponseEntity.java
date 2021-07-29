@@ -18,7 +18,7 @@ public class ResponseEntity<T> {
     /**
      * 数据
      */
-    public T                    data;
+    private T                   data;
 
     /**
      * 返回的code

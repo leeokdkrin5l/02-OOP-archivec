@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "swagger",
+      "type": "com.swagger.doc.core.properties.ConfigProperties",
+      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "swagger.doc.host",
+      "type": "java.lang.String",
+      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
+    },
+    {
+      "name": "swagger.doc.basePath",
+      "type": "java.lang.String",
+      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
+    },
+    {
+      "name": "swagger.doc.sourceDir",
+      "type": "java.lang.String",
+      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
+    },
+    {
+      "name": "swagger.doc.visitPath",
+      "type": "java.lang.String",
+      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
+    }
+  ],
+  "hints": [
+    {
+      "name": "swagger.doc.host",
+      "values": [
+        {
+          "value": "default",
+          "description": "127.0.0.1"
+        }
+      ]
+    }
+  ]
+}
