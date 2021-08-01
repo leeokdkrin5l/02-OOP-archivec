@@ -16,10 +16,10 @@ import java.util.Arrays;
  * User: wk
  * Date: 2017-07-13 下午5:19
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.swagger.demo")
 @EnableSwaggerDoc
 public class SampleApplication {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(SampleApplication.class);
         springApplication.run(args);
     }
