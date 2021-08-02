@@ -59,28 +59,45 @@ mvn install
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-###3.自定义url
+###3.spring boot 配置
 ```java
 
-@RestController
-public class SwaggerController {
-    private volatile WrapSwagger wrapSwagger;
+@EnableSwaggerDoc
+public class SampleApplication {
+    public static void main(String[] args) {
+        SpringApplication springApplication = new SpringApplication(SampleApplication.class);
+        springApplication.run(args);
+    }
 
-    @RequestMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String wrapSwagger() {
-        if (wrapSwagger == null) {
-            wrapSwagger = SwaggerUtils.parseJarSource("source", UpmOpsApiApplication.getInstalce(),
-                Arrays.asList("basicErrorController", "swaggerController"));
-        }
+    @Bean
+    public FilterRegistrationBean logFilterRegistrationBean() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(new FilterInterceptor());
+        filterRegistrationBean.setName("logFilterRegistrationBean");
+        filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
+        filterRegistrationBean.setOrder(1);
+        return filterRegistrationBean;
+    }
 
-        return BeanJsonConversionUtil.beanConversionJson(wrapSwagger);
+    @Bean
+    public SwaggerDoc swaggerDoc() {
+        Contact contact = new Contact();
+        Info info = new Info();
+        info.setTitle("测试文档");
+        contact.setEmail("542467660@qq.com");
+        contact.setName("wk");
+        contact.setUrl("http://git.oschina.net/wangkang_daydayup/swagger-doc");
+        info.setDescription("swagger-doc解决了springfox用注解污染代码的问题，采用原生java-doc来实现文档的生成，让代码更加干净，学习成本更低");
+        info.setContact(contact);
+        return new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).withDoc("doc")
+            .withDoc("测试文档").withInfo(info).withHost("139.224.35.224")
+            .addIgnoreControllers("swaggerController", "basicErrorController").build();
     }
 
 }
 
 
 ```
-需要自己去定义返回的controller，(目前版本不是正式版，方式有些粗暴 请见谅)
 
 ###4. 打包源码
 
