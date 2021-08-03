@@ -135,7 +135,15 @@ https://github.com/swagger-api/swagger-ui
 
 总体来说使用方式很简单，上面的quickstart仅仅只用于单模块项目，也就是说dto跟api在同一个项目里面，多模块复杂项目会在接下俩的文档里面继续讲解
 
-###效果
+###效果图
+
+![](http://git.oschina.net/wangkang_daydayup/swagger-doc/raw/master/img/pic1.png)
+
+![](http://git.oschina.net/wangkang_daydayup/swagger-doc/raw/master/img/pic2.png)
+
+![](http://git.oschina.net/wangkang_daydayup/swagger-doc/raw/master/img/pic3.png)
+
+###测试链接
 
 http://petstore.swagger.io/?url=http://139.224.35.224:8080/swagger.json
 
