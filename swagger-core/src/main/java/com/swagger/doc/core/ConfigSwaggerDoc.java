@@ -18,6 +18,11 @@ public class ConfigSwaggerDoc {
     private ConfigProperties configProperties;
 
     @Bean
+    public SwaggerSourceParse swaggerSourceParse() {
+        return new SwaggerSourceParse();
+    }
+
+    @Bean
     public SwaggerController swaggerController() {
         return new SwaggerController();
     }
