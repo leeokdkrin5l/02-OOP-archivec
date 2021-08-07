@@ -19,6 +19,7 @@ public class SwaggerController {
     private volatile WrapSwagger wrapSwagger;
     @Autowired
     private ApplicationContext   applicationContext;
+    @Autowired
     private SwaggerSourceParse   swaggerSourceParse;
 
     @GetMapping(value = "${swagger.doc.visitPath:/swagger.json}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

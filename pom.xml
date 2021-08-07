@@ -11,6 +11,7 @@
     <modules>
         <module>swagger-core</module>
         <module>sample/swagger-doc-demo</module>
+        <module>sample/swagger-doc-springmvc-demo</module>
     </modules>
 
 
