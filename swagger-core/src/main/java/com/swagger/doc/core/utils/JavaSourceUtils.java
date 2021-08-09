@@ -12,12 +12,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +38,39 @@ public class JavaSourceUtils {
     static {
         skipPackage.add("javax.servlet");
         skipPackage.add("org.springframework");
+    }
+
+    /**
+     * 列出项目下面的javafile
+     * @return
+     */
+    public static List<File> listProjectJavaFile() {
+        File file = new File("");
+        file = file.getAbsoluteFile();
+        List<File> allJavaFile = new ArrayList<>();
+        File[] allFile = file.listFiles();
+        Stack<File> stack = new Stack<>();
+        if (allFile != null) {
+            for (File tmp : allFile) {
+                stack.push(tmp);
+            }
+        }
+        while (!stack.isEmpty()) {
+            File tmpFile = stack.pop();
+            if (tmpFile.isDirectory()) {
+                File[] files = tmpFile.listFiles();
+                if (files != null)
+                    for (File tmp : files) {
+                        stack.push(tmp);
+                    }
+                continue;
+            }
+            if (StringUtils.endsWith(tmpFile.getName(), ".java")) {
+                allJavaFile.add(tmpFile);
+            }
+
+        }
+        return allJavaFile;
     }
 
     public static String getJavaClassDoc(JavaClass javaClass, String tag) {

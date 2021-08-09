@@ -4,6 +4,7 @@ import com.thoughtworks.qdox.library.SortedClassLibraryBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,20 @@ public class SourceReader {
         }
 
         return new ArrayList<>(classLibraryBuilder.getClassLibrary().getJavaClasses());
+    }
+
+    public static List<JavaClass> readJavaFiles(List<File> classList) throws IOException {
+        List<JavaClass> result = new ArrayList<>();
+        if (CollectionUtils.isEmpty(classList))
+            return result;
+        SortedClassLibraryBuilder classLibraryBuilder = new SortedClassLibraryBuilder();
+        classLibraryBuilder.appendDefaultClassLoaders();
+        for (File file : classList) {
+            classLibraryBuilder.addSource(file);
+
+        }
+        return new ArrayList<>(classLibraryBuilder.getClassLibrary().getJavaClasses());
+
     }
 
     /**

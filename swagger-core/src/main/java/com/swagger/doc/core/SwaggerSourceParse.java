@@ -2,6 +2,7 @@ package com.swagger.doc.core;
 
 import com.swagger.doc.core.entity.WrapSwagger;
 import com.swagger.doc.core.properties.ConfigProperties;
+import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SourceReader;
 import com.thoughtworks.qdox.model.JavaClass;
 import io.swagger.models.Swagger;
@@ -15,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public class SwaggerSourceParse {
         File file = new File(sourceDir);
         File[] files = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();
-        if (files != null)
+        if (files != null) {
             for (File file1 : files) {
                 if (file1.isDirectory())
                     continue;
@@ -48,8 +50,22 @@ public class SwaggerSourceParse {
                     continue;
                 }
             }
+        }
+        List<File> projectFiles = JavaSourceUtils.listProjectJavaFile();
+        Map<String, JavaClass> projectJavaClassMap = new HashMap<>();
+        try {
+            Map<String, JavaClass> javaClassMap = SourceReader
+                .transforJavaClass(SourceReader.readJavaFiles(projectFiles));
+            if (javaClassMap != null)
+                projectJavaClassMap.putAll(javaClassMap);
+        } catch (IOException e) {
+            logger.info("", e);
+        }
         Map<String, JavaClass> javaClassMap = SourceReader.transforJavaClass(javaClassList);
-        Swagger swagger = new SpringNewDocReader(new Swagger()).read(javaClassMap, configurableApplicationContext);
+        if (javaClassMap != null)
+            projectJavaClassMap.putAll(javaClassMap);
+        Swagger swagger = new SpringNewDocReader(new Swagger()).read(projectJavaClassMap,
+            configurableApplicationContext);
         WrapSwagger wrapSwagger = new WrapSwagger();
         BeanUtils.copyProperties(swagger, wrapSwagger);
         wrapSwagger.process();
