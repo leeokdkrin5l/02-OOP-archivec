@@ -4,6 +4,7 @@ import com.swagger.doc.core.entity.WrapSwagger;
 import com.swagger.doc.core.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,9 @@ public class SwaggerController {
     private ApplicationContext   applicationContext;
     @Autowired
     private SwaggerSourceParse   swaggerSourceParse;
+
+    @Autowired
+    private Environment          environment;
 
     @GetMapping(value = "${swagger.doc.visitPath:/swagger.json}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody

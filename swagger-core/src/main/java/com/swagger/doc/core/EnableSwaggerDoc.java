@@ -18,7 +18,4 @@ import java.lang.annotation.Target;
 @Import({ ConfigSwaggerDoc.class })
 @Configuration
 public @interface EnableSwaggerDoc {
-    String[] enableProfiles() default {};
-
-    String[] closeProfiles() default {};
 }
