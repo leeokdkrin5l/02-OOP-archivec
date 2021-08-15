@@ -28,4 +28,5 @@ public class SwaggerController {
         wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
         return JsonUtils.toJson(wrapSwagger);
     }
+
 }
