@@ -6,6 +6,7 @@ import com.thoughtworks.qdox.model.JavaMethod;
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -24,13 +25,20 @@ public class PathParamParse extends AbstractParamParse {
 
     @Override
     public List<Parameter> parseParameter(java.lang.reflect.Parameter parameter, JavaMethod javaMethod, Method method,
-                                          String modelName, String paramName, Map<String, JavaClass> classJavaClassMap) {
+                                          String modelName, String paramName,
+                                          Map<String, JavaClass> classJavaClassMap) {
         PathParameter pathParameter = new PathParameter();
         pathParameter.setProperty(modelConverters.readAsProperty(parameter.getParameterizedType()));
         if (javaMethod != null) {
             String desc = JavaSourceUtils.readParamDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), paramName);
             pathParameter.setDescription(desc);
         }
+        pathParameter.setRequired(true);
+        String pathName = getPathName(parameter);
+        if (StringUtils.isNotBlank(pathName))
+            pathParameter.setName(pathName);
+        else
+            pathParameter.setName(paramName);
         return Arrays.asList(pathParameter);
     }
 }

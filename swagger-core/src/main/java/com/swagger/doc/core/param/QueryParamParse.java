@@ -9,6 +9,7 @@ import io.swagger.models.Model;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,6 +41,13 @@ public class QueryParamParse extends AbstractParamParse {
                 String desc = JavaSourceUtils.readParamDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), paramName);
                 parameterSwagger.setDescription(desc);
             }
+            if (isRequire(parameter))
+                parameterSwagger.setRequired(true);
+            else
+                parameterSwagger.setRequired(false);
+            String annName = getQueryParamName(parameter);
+            if (StringUtils.isNoneBlank(annName))
+                parameterSwagger.setName(annName);
             parameterList.add(parameterSwagger);
         } else {
             for (Map.Entry<String, Model> modelEntry : parameterMap.entrySet()) {

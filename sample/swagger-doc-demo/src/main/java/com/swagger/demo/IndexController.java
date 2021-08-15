@@ -3,8 +3,10 @@ package com.swagger.demo;
 import com.swagger.demo.dto.DemoDto;
 import com.swagger.demo.dto.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class IndexController {
      * @param size 当前size
      * @return
      */
-    @GetMapping("/test")
-    public ResponseEntity<List<DemoDto>> test(int page, int size) {
+    @GetMapping("/test/{id}")
+    public ResponseEntity<List<DemoDto>> test(@RequestParam int page, int size, @PathVariable("ids") Long id) {
         return ResponseEntity.success();
     }
 

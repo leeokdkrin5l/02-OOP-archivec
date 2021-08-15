@@ -131,6 +131,15 @@ public class SpringAnnotationUtils {
         return false;
     }
 
+    public static Annotation getAnnotation(Parameter parameter, Class annotationTarget) {
+        Annotation[] annotations = parameter.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().isAssignableFrom(annotationTarget))
+                return annotation;
+        }
+        return null;
+    }
+
     public static String getControllerPath(Class clazz) {
         String path;
         Annotation controllerAnnotation = clazz.getAnnotation(Controller.class);
