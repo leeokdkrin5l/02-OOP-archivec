@@ -1,5 +1,7 @@
 package com.swagger.demo.dto;
 
+import org.hibernate.validator.constraints.Length;
+
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -13,7 +15,8 @@ public class DemoDto {
     /**
      * name doc 注释
      */
-    private Long name;
+    @Length(max = 2000)
+    private String name;
 
     public Long getId() {
         return id;
@@ -23,11 +26,11 @@ public class DemoDto {
         this.id = id;
     }
 
-    public Long getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Long name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

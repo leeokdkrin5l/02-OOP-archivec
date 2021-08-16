@@ -41,7 +41,7 @@ public class IndexController {
     }
 
     @GetMapping("/map")
-    public Map mapTest() {
+    public Map mapTest(DemoDto demoDto) {
         return null;
     }
 }

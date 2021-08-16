@@ -10,7 +10,9 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.Property;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +65,20 @@ public class QueryParamParse extends AbstractParamParse {
         QueryParameter queryParameter = new QueryParameter();
         queryParameter.setProperty(property);
         queryParameter.setName(name);
+        Class clazz = (Class) parameter.getParameterizedType();
+        Field fieldClazz = FieldUtils.getDeclaredField(clazz, name,true);
         JavaClass javaClass = classJavaClassMap.get(((Class) (parameter.getParameterizedType())).getName());
         if (javaClass != null) {
             JavaField field = javaClass.getFieldByName(name);
             if (field != null)
                 queryParameter.setDescription(field.getComment());
+        }
+        if (fieldClazz != null) {
+            int lengths[] = getLength(fieldClazz);
+            if (lengths != null) {
+                queryParameter.setMaxLength(lengths[1]);
+                queryParameter.setMinLength(lengths[0]);
+            }
         }
         parameterList.add(queryParameter);
     }

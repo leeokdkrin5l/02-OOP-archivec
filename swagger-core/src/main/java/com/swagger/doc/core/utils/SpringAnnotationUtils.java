@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -129,6 +130,10 @@ public class SpringAnnotationUtils {
                 return true;
         }
         return false;
+    }
+
+    public static Annotation getFieldAnnotation(Field field, Class annotationTarget) {
+        return field.getAnnotation(annotationTarget);
     }
 
     public static Annotation getAnnotation(Parameter parameter, Class annotationTarget) {
