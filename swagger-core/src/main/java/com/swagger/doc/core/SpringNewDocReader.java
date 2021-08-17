@@ -73,6 +73,25 @@ public class SpringNewDocReader extends AbstractDocReader {
                 objectMap.remove(s);
             }
         }
+        Map<String, Object> objectMapTmp = new HashMap<>();
+        for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
+            Class clazz = entry.getValue().getClass();
+            if (StringUtils.indexOf(clazz.getName(), "CGLIB") > 0) {
+                String name = clazz.getName();
+                String className = StringUtils.substring(name, 0, StringUtils.indexOf(name, "$"));
+
+                try {
+                    Class clazzTmp = Class.forName(className);
+                    objectMapTmp.put(className, clazzTmp);
+                } catch (ClassNotFoundException e) {
+                    continue;
+                }
+
+            } else {
+                objectMapTmp.put(entry.getKey(), entry.getValue());
+            }
+        }
+        objectMap = objectMapTmp;
         for (Map.Entry<String, Object> controllerEntry : objectMap.entrySet()) {
             Class clazz = controllerEntry.getValue().getClass();
             JavaClass javaClass = classJavaClassMap.get(clazz.getName());
