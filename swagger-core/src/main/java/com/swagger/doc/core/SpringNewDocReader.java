@@ -79,7 +79,6 @@ public class SpringNewDocReader extends AbstractDocReader {
             if (StringUtils.indexOf(clazz.getName(), "CGLIB") > 0) {
                 String name = clazz.getName();
                 String className = StringUtils.substring(name, 0, StringUtils.indexOf(name, "$"));
-
                 try {
                     Class clazzTmp = Class.forName(className);
                     objectMapTmp.put(className, clazzTmp);
@@ -88,12 +87,12 @@ public class SpringNewDocReader extends AbstractDocReader {
                 }
 
             } else {
-                objectMapTmp.put(entry.getKey(), entry.getValue());
+                objectMapTmp.put(entry.getKey(), entry.getValue().getClass());
             }
         }
         objectMap = objectMapTmp;
         for (Map.Entry<String, Object> controllerEntry : objectMap.entrySet()) {
-            Class clazz = controllerEntry.getValue().getClass();
+            Class clazz = (Class) controllerEntry.getValue();
             JavaClass javaClass = classJavaClassMap.get(clazz.getName());
             String doc = JavaSourceUtils.getJavaClassDoc(javaClass, "desc");
             processMethod(clazz, javaClass);
