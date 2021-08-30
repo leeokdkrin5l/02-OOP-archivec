@@ -1,11 +1,28 @@
 package com.swagger.doc.core;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.swagger.doc.core.entity.RequestMappingInfo;
 import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SpringAnnotationUtils;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
+
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -19,23 +36,8 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.refs.GenericRef;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestMethod;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -106,7 +108,8 @@ public class SpringNewDocReader extends AbstractDocReader {
     private void processMethod(Class clazz, JavaClass javaClass) {
         Method[] methods = clazz.getMethods();
         Map<String, JavaMethod> javaMethodMap = JavaSourceUtils.getAllMethod(javaClass);
-
+        Map<String, Path> paths = new HashMap<String, Path>();
+        
         for (Method method : methods) {
             RequestMappingInfo requestMapping = SpringAnnotationUtils.getRequestMappingInfo(method);
             if (requestMapping == null)
@@ -118,7 +121,15 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
 
             for (String s : requestMapping.getValue()) {
-                Path path = new Path();
+            	
+            	String url = SpringAnnotationUtils.getControllerPath(clazz) + s;
+				Path path = null;
+				if (paths.containsKey(url)) {
+					path = paths.get(url);
+				} else {
+					path = new Path();
+				}
+            	
                 Operation operation = new Operation();
                 operation.setConsumes(Arrays.asList(requestMapping.getConsumes()));
                 operation.setProduces(Arrays.asList(requestMapping.getProduces()));
@@ -151,10 +162,12 @@ public class SpringNewDocReader extends AbstractDocReader {
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
-                swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
+                //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
+                paths.put(url, path);
             }
-
         }
+        //
+        swagger.paths(paths);
     }
 
     private Response getResponse(Type genericReturnType) {
