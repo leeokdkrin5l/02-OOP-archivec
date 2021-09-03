@@ -1,6 +1,7 @@
 package com.swagger.doc.core.param;
 
 import com.swagger.doc.core.utils.JavaSourceUtils;
+import com.swagger.doc.core.utils.SpringAnnotationUtils;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
@@ -51,6 +52,7 @@ public class QueryParamParse extends AbstractParamParse {
             if (StringUtils.isNoneBlank(annName))
                 parameterSwagger.setName(annName);
             parameterList.add(parameterSwagger);
+
         } else {
             for (Map.Entry<String, Model> modelEntry : parameterMap.entrySet()) {
                 modelEntry.getValue().getProperties()

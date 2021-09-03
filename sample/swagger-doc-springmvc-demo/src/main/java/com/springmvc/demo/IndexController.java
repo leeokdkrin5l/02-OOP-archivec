@@ -18,9 +18,14 @@ public class IndexController {
         System.out.println("123123");
     }
 
+    /**
+     * 测试描述
+     * @param param 参数描述
+     * @return
+     */
     @RequestMapping(value = { "/", "" })
     @ResponseBody
-    public String index() {
+    public String index(String param) {
         return "123";
     }
 }

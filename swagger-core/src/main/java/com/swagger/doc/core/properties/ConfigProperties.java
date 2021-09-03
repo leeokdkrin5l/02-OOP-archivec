@@ -13,6 +13,15 @@ public class ConfigProperties {
     private String basePath;
     private String host;
     private String visitPath;
+    private boolean useWar = false;
+
+    public boolean isUseWar() {
+        return useWar;
+    }
+
+    public void setUseWar(boolean useWar) {
+        this.useWar = useWar;
+    }
 
     public String getVisitPath() {
         return visitPath;

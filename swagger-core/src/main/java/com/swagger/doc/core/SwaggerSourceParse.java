@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,17 @@ public class SwaggerSourceParse {
         String sourceDir = DEFAULT_DIR;
         if (StringUtils.isNoneBlank(configProperties.getSourceDir()))
             sourceDir = configProperties.getSourceDir();
-        File file = new File(sourceDir);
+        File file = null;
+        if (configProperties.isUseWar()) {
+            try {
+                file = new ClassPathResource(sourceDir).getFile();
+            } catch (Exception e) {
+                logger.warn("", e);
+                file = new File(sourceDir);
+            }
+        } else {
+            file = new File(sourceDir);
+        }
         File[] files = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();
         if (files != null) {
