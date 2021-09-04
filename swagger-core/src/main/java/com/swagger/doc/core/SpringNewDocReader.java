@@ -93,19 +93,23 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
         }
         objectMap = objectMapTmp;
+        
+        Map<String, Path> paths = new HashMap<String, Path>();
+        
         for (Map.Entry<String, Object> controllerEntry : objectMap.entrySet()) {
             Class clazz = (Class) controllerEntry.getValue();
             JavaClass javaClass = classJavaClassMap.get(clazz.getName());
             String doc = JavaSourceUtils.getJavaClassDoc(javaClass, "desc");
-            processMethod(clazz, javaClass);
+            paths.putAll(processMethod(clazz, javaClass));
             Tag tag = new Tag();
             tag.setName(clazz.getSimpleName());
             tag.setDescription(doc);
             swagger.addTag(tag);
         }
+        swagger.paths(paths);
     }
 
-    private void processMethod(Class clazz, JavaClass javaClass) {
+    private Map<String, Path> processMethod(Class clazz, JavaClass javaClass) {
         Method[] methods = clazz.getMethods();
         Map<String, JavaMethod> javaMethodMap = JavaSourceUtils.getAllMethod(javaClass);
         Map<String, Path> paths = new HashMap<String, Path>();
@@ -167,7 +171,7 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
         }
         //
-        swagger.paths(paths);
+        return paths;
     }
 
     private Response getResponse(Type genericReturnType) {
