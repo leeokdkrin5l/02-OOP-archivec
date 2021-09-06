@@ -165,6 +165,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
+				operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
                 paths.put(url, path);
