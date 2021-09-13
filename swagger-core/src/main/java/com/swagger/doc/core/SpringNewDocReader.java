@@ -213,7 +213,6 @@ public class SpringNewDocReader extends AbstractDocReader {
                 paraMaterNameMap.put(i, method.getParameters()[i].getName());
             }
         }
-
         for (int i = 0; i < method.getParameters().length; i++) {
             java.lang.reflect.Parameter parameter = method.getParameters()[i];
             //判断这个参数是否需要跳过

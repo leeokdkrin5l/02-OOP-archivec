@@ -9,10 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "swagger.doc")
 public class ConfigProperties {
-    private String sourceDir;
-    private String basePath;
-    private String host;
-    private String visitPath;
+    private String  sourceDir;
+    private String  basePath;
+    private String  host;
+    private String  visitPath;
     private boolean useWar = false;
 
     public boolean isUseWar() {
