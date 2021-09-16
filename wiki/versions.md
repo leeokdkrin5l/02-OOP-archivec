@@ -2,7 +2,7 @@
 ##1.2 2017-10-01
 1. 增加Controller中对@deprecated注解的支持
 2. 增加对spring mvc war包的完美支持
-3. 增加对spring 4.x系列的支持
+3. 解决spring MVC war中乱码问题
 4. 优化部分逻辑
 5. 解决一些已知bug
 ##1.1 2017-7-30
