@@ -26,7 +26,7 @@ public class SwaggerController {
     @Autowired
     private Environment          environment;
 
-    @GetMapping(value = "/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "${swagger.doc.visitPath:/swagger.json}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String swagger() {
         wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
