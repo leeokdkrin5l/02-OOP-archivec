@@ -5,12 +5,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by IntelliJ IDEA.
  * User: wk
  * Date: 2017-07-18 下午5:05
  */
+
 @Controller
 public class IndexController {
     @PostConstruct
@@ -25,7 +27,7 @@ public class IndexController {
      */
     @RequestMapping(value = { "/", "" })
     @ResponseBody
-    public String index(String param) {
+    public String index(String param, HttpServletRequest request) {
         return "123";
     }
 }

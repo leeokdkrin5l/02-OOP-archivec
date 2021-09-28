@@ -90,7 +90,8 @@ public class JavaSourceUtils {
     public static boolean isSkip(Parameter parameter, SwaggerDoc swaggerDoc) {
         String packageName = "";
         try {
-            if (swaggerDoc.getIgnoreParamNames().contains(parameter.getName()))
+            if (swaggerDoc.getIgnoreParamNames() != null
+                && swaggerDoc.getIgnoreParamNames().contains(parameter.getName()))
                 return true;
             if (parameter.getParameterizedType() instanceof Class) {
                 Class clazz = (Class) parameter.getParameterizedType();
