@@ -2,6 +2,8 @@ package com.swagger.demo.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -11,12 +13,21 @@ public class DemoDto {
     /**
      * id doc注释
      */
-    private Long id;
+    private Long           id;
     /**
      * name doc 注释
      */
     @Length(max = 2000)
-    private String name;
+    private String         name;
+    private List<ArrayDto> arrayDtos;
+
+    public List<ArrayDto> getArrayDtos() {
+        return arrayDtos;
+    }
+
+    public void setArrayDtos(List<ArrayDto> arrayDtos) {
+        this.arrayDtos = arrayDtos;
+    }
 
     public Long getId() {
         return id;

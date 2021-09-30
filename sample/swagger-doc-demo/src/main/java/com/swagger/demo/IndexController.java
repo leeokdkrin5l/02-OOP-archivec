@@ -1,5 +1,6 @@
 package com.swagger.demo;
 
+import com.swagger.demo.dto.ArrayDto;
 import com.swagger.demo.dto.DemoDto;
 import com.swagger.demo.dto.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +26,10 @@ public class IndexController {
      * @param size 当前size
      * @return
      */
-    @GetMapping("/test/{id}")
-    public ResponseEntity<List<DemoDto>> test(@RequestParam int page, int size, @PathVariable("ids") Long id) {
-        return ResponseEntity.success();
-    }
+//    @GetMapping("/test/{id}")
+//    public ResponseEntity<List<DemoDto>> test(@RequestParam int page, int size, @PathVariable("ids") Long id) {
+//        return ResponseEntity.success();
+//    }
 
     /**
      * demo 接口
@@ -36,12 +37,12 @@ public class IndexController {
      * @return
      */
     @PostMapping("/demo")
-    public ResponseEntity<String> demo(@RequestBody DemoDto demoDto) {
-        return ResponseEntity.success("demo");
-    }
-
-    @GetMapping("/map")
-    public Map mapTest(DemoDto demoDto) {
+    public List<ArrayDto> demo(@RequestBody List<DemoDto> demoDto) {
         return null;
     }
+
+//    @GetMapping("/map")
+//    public Map mapTest(DemoDto demoDto) {
+//        return null;
+//    }
 }

@@ -4,9 +4,12 @@ import com.swagger.doc.core.utils.JsonUtils;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 import io.swagger.converter.ModelConverters;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.RefProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -36,12 +39,22 @@ public class BodyParamParse extends AbstractParamParse {
         if (StringUtils.isEmpty(modelName))
             throw new IllegalArgumentException(String.format("method %s paramater %s can not use @RequestBody",
                 method.getName(), parameter.getName()));
-
         BodyParameter bodyParameter = new BodyParameter();
-        RefModel refModel = new RefModel();
-        refModel.set$ref("#/definitions/" + modelName);
+        Model model = null;
+        if (!(parameter.getParameterizedType() instanceof Class)) {
+            ArrayModel arrayModel = new ArrayModel();
+            RefProperty refProperty = new RefProperty();
+            refProperty.set$ref("#/definitions/" + modelName);
+            arrayModel.setItems(refProperty);
+            model = arrayModel;
+        } else {
+            RefModel refModel = new RefModel();
+            refModel.set$ref("#/definitions/" + modelName);
+            model = refModel;
+        }
+
         bodyParameter.setName(paramName);
-        bodyParameter.setSchema(refModel);
+        bodyParameter.setSchema(model);
         try {
             Object obj = parameter.getType().newInstance();
             processObj(obj);

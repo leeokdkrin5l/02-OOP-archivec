@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.models.ArrayModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -93,9 +94,9 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
         }
         objectMap = objectMapTmp;
-        
+
         Map<String, Path> paths = new HashMap<String, Path>();
-        
+
         for (Map.Entry<String, Object> controllerEntry : objectMap.entrySet()) {
             Class clazz = (Class) controllerEntry.getValue();
             JavaClass javaClass = classJavaClassMap.get(clazz.getName());
@@ -113,7 +114,7 @@ public class SpringNewDocReader extends AbstractDocReader {
         Method[] methods = clazz.getMethods();
         Map<String, JavaMethod> javaMethodMap = JavaSourceUtils.getAllMethod(javaClass);
         Map<String, Path> paths = new HashMap<String, Path>();
-        
+
         for (Method method : methods) {
             RequestMappingInfo requestMapping = SpringAnnotationUtils.getRequestMappingInfo(method);
             if (requestMapping == null)
@@ -125,15 +126,15 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
 
             for (String s : requestMapping.getValue()) {
-            	
-            	String url = SpringAnnotationUtils.getControllerPath(clazz) + s;
-				Path path = null;
-				if (paths.containsKey(url)) {
-					path = paths.get(url);
-				} else {
-					path = new Path();
-				}
-            	
+
+                String url = SpringAnnotationUtils.getControllerPath(clazz) + s;
+                Path path = null;
+                if (paths.containsKey(url)) {
+                    path = paths.get(url);
+                } else {
+                    path = new Path();
+                }
+
                 Operation operation = new Operation();
                 operation.setConsumes(Arrays.asList(requestMapping.getConsumes()));
                 operation.setProduces(Arrays.asList(requestMapping.getProduces()));
@@ -165,7 +166,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
-				operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
+                operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
                 paths.put(url, path);
@@ -263,9 +264,9 @@ public class SpringNewDocReader extends AbstractDocReader {
                 && parameterizedType.getActualTypeArguments().length > 0) {
                 for (Type type : parameterizedType.getActualTypeArguments()) {
                     if (type instanceof ParameterizedTypeImpl) {
-                        readType(type);
+                        name = readType(type);
                     } else {
-                        readModelMap(type, classJavaClassMap.get(type.getTypeName()));
+                        name = readModelMap(type, classJavaClassMap.get(type.getTypeName()));
                     }
                 }
             }

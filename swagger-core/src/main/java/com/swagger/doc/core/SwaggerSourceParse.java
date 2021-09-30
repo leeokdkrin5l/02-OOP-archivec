@@ -54,6 +54,8 @@ public class SwaggerSourceParse {
                 if (file1.isDirectory())
                     continue;
                 try {
+                    if (file1.getName().lastIndexOf(".jar") < 0)
+                        continue;
                     List<JavaClass> list = SourceReader.readFile(file1);
                     javaClassList.addAll(list);
                 } catch (IOException e) {
