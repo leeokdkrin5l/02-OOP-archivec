@@ -124,7 +124,8 @@ public class SpringNewDocReader extends AbstractDocReader {
             if (javaMethod != null) {
                 doc = javaMethod.getComment();
             }
-
+            if (requestMapping.getValue() == null || requestMapping.getValue().length == 0)
+                requestMapping.setValue(new String[] { "" });
             for (String s : requestMapping.getValue()) {
 
                 String url = SpringAnnotationUtils.getControllerPath(clazz) + s;
@@ -170,6 +171,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
                 paths.put(url, path);
+
             }
         }
         //
