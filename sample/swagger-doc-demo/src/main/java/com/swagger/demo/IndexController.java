@@ -38,13 +38,13 @@ public class IndexController {
      * @param demoDto
      * @return
      */
-    @PostMapping()
+    @PostMapping
     public List<ArrayDto> demo(@RequestBody List<DemoDto> demoDto) {
         return null;
     }
 
-    @GetMapping()
-    public List<ArrayDto> demoGet() {
+    @PostMapping("/test")
+    public List<ArrayDto> demoGet(@RequestBody String str) {
         return null;
     }
 

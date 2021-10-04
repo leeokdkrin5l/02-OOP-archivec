@@ -6,9 +6,11 @@ import com.thoughtworks.qdox.model.JavaMethod;
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,10 +38,22 @@ public class BodyParamParse extends AbstractParamParse {
     public List<Parameter> parseParameter(java.lang.reflect.Parameter parameter, JavaMethod javaMethod, Method method,
                                           String modelName, String paramName,
                                           Map<String, JavaClass> classJavaClassMap) {
-        if (StringUtils.isEmpty(modelName))
+        BodyParameter bodyParameter = new BodyParameter();
+        if (StringUtils.isEmpty(modelName)) {
+            ModelImpl model = new ModelImpl();
+            Property property = modelConverters.readAsProperty(parameter.getType());
+            if (property!=null){
+                model.addProperty(paramName, property);
+                bodyParameter.setName(paramName);
+                model.setType(property.getType());
+                bodyParameter.setSchema(model);
+                return Arrays.asList(bodyParameter);
+            }
+
             throw new IllegalArgumentException(String.format("method %s paramater %s can not use @RequestBody",
                 method.getName(), parameter.getName()));
-        BodyParameter bodyParameter = new BodyParameter();
+        }
+
         Model model = null;
         if (!(parameter.getParameterizedType() instanceof Class)) {
             ArrayModel arrayModel = new ArrayModel();
