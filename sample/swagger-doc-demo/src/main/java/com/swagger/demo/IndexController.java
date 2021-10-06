@@ -43,10 +43,10 @@ public class IndexController {
         return null;
     }
 
-    @PostMapping("/test")
-    public List<ArrayDto> demoGet(@RequestBody String str) {
-        return null;
-    }
+//    @PostMapping("/test")
+//    public List<ArrayDto> demoGet(@RequestBody String str) {
+//        return null;
+//    }
 
     //    @GetMapping("/map")
     //    public Map mapTest(DemoDto demoDto) {

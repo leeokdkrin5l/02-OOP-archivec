@@ -3,6 +3,7 @@
 2. 修复文件夹中识别多余文件bug
 3. 支持@RequestBody 是List<DemoDto> 这种形式的参数
 4. 修复@RequestMapping 中 不填写url就无法识别的bug
+5. 支持spring 中直接使用 test(@RequestBody String str)这种方式
 
 ##1.2.0 2017-09-30
 1. 增加Controller中对@deprecated注解的支持
