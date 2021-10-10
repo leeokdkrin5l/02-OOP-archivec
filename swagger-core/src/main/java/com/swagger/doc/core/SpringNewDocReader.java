@@ -72,10 +72,20 @@ public class SpringNewDocReader extends AbstractDocReader {
     private void readControllerList(ApplicationContext configurableApplicationContext, List<String> ingnoreController) {
         Map<String, Object> objectMap = configurableApplicationContext.getBeansWithAnnotation(Controller.class);
         if (!CollectionUtils.isEmpty(ingnoreController)) {
+            Map<String, String> className = new HashMap<>(objectMap.size());
+            for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
+                className.put(entry.getValue().getClass().getName(), entry.getKey());
+            }
             for (String s : ingnoreController) {
                 objectMap.remove(s);
+                String name = className.get(s);
+                if (name != null) {
+                    objectMap.remove(name);
+                }
             }
+
         }
+
         Map<String, Object> objectMapTmp = new HashMap<>();
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             Class clazz = entry.getValue().getClass();
