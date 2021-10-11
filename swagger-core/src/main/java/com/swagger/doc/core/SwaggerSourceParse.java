@@ -40,12 +40,16 @@ public class SwaggerSourceParse {
         if (configProperties.isUseWar()) {
             try {
                 file = new ClassPathResource(sourceDir).getFile();
+                logger.info("read file path is {}",file.getAbsolutePath());
             } catch (Exception e) {
                 logger.warn("", e);
                 file = new File(sourceDir);
+                logger.info("read file path is {}",file.getAbsolutePath());
+
             }
         } else {
             file = new File(sourceDir);
+            logger.info("read file path is {}",file.getAbsolutePath());
         }
         File[] files = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();

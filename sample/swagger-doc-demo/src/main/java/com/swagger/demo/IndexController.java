@@ -28,10 +28,10 @@ public class IndexController {
      * @param size 当前size
      * @return
      */
-    //    @GetMapping("/test/{id}")
-    //    public ResponseEntity<List<DemoDto>> test(@RequestParam int page, int size, @PathVariable("ids") Long id) {
-    //        return ResponseEntity.success();
-    //    }
+    @GetMapping("/test/{id}")
+    public ResponseEntity<List<DemoDto>> test(@RequestParam int page, int size, @PathVariable("ids") Long id) {
+        return ResponseEntity.success();
+    }
 
     /**
      * demo 接口

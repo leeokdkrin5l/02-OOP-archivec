@@ -1,3 +1,7 @@
+## 1.2.2 
+1.支持按照包名忽略Controller,并且兼容Spring bean name
+
+
 ## 1.2.1
 1. 修复spring mvc中 不忽略参数bug
 2. 修复文件夹中识别多余文件bug
