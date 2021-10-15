@@ -56,10 +56,10 @@ mvn install
 ```
 ###2.项目中使用
 ```java
-<dependency>
-    <groupId>swagger-doc</groupId>
+ <dependency>
+    <groupId>com.gitee.largerfish</groupId>
     <artifactId>swagger-core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 ```
 ###3.spring boot 配置
