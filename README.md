@@ -56,6 +56,13 @@ mvn install
 ```
 ###2.项目中使用
 ```java
+<repositories>
+        <repository>
+            <id>oszrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+    
  <dependency>
     <groupId>com.gitee.largerfish</groupId>
     <artifactId>swagger-core</artifactId>
