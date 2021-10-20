@@ -1,6 +1,6 @@
 
 # 文档
-文档(https://gitee.com/wangkang_daydayup/swagger-doc/wikis/Home)
+文档(https://gitee.com/largerfish/swagger-doc/wikis/Home)
 # swagger-doc 
 ## 重点先说说这个项目解决了什么问题
 这个总得来说是给swagger解决了大部分人不想用swagger的问题，springfox的注解污染代码，可以来看看用springfox时候的代码
