@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.swagger.models.ArrayModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -30,6 +29,7 @@ import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.parameters.CookieParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
@@ -39,7 +39,6 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.refs.GenericRef;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -60,6 +59,16 @@ public class SpringNewDocReader extends AbstractDocReader {
         List<String> ignoreController = swaggerDoc.getIgnoreControllers();
         readControllerList(configurableApplicationContext, ignoreController);
         fixSwagger();
+        this.swagger.setSecurityDefinitions(this.swaggerDoc.getSecurityDefinitions());
+        // ParameterBuilder parameterBuilder = new ParameterBuilder();
+        // Parameter parameter =parameterBuilder.name("Authentication").description("token")
+        // .modelRef(new ModelRef("string")).required(false).parameterType("header").build();
+        Map<String,Parameter> parameters = new HashMap<>();
+        CookieParameter cookieParameter = new CookieParameter();
+        cookieParameter.setType("string");
+        cookieParameter.setDefaultValue("tet=123");
+        parameters.put("Cookie", cookieParameter);
+        this.swagger.setParameters(parameters);
         return swagger;
     }
 

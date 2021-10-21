@@ -3,8 +3,10 @@ package com.swagger.doc.core.entity;
 import io.swagger.models.Info;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import io.swagger.models.auth.SecuritySchemeDefinition;
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -18,7 +20,13 @@ public class SwaggerDoc {
     private Info         info;
     private String       host;
     private String       basePath;
-
+    private Map<String, SecuritySchemeDefinition> securityDefinitions;
+    public void setSecurityDefinitions(Map<String, SecuritySchemeDefinition> securityDefinitions){
+        this.securityDefinitions = securityDefinitions;
+    }
+    public Map<String, SecuritySchemeDefinition> getSecurityDefinitions() {
+        return securityDefinitions;
+    }
     public List<String> getIgnoreControllers() {
         return ignoreControllers;
     }
@@ -83,7 +91,7 @@ public class SwaggerDoc {
         private Info         info;
         private String       host;
         private String       basePath;
-
+        private Map<String, SecuritySchemeDefinition> securityDefinitions = new HashMap<>(); 
         public SwaggerDocBuilder() {
         }
 
@@ -91,7 +99,10 @@ public class SwaggerDoc {
             this.doc = doc;
             return this;
         }
-
+        public SwaggerDocBuilder addSecurityDefinitions(String name,SecuritySchemeDefinition schemeDefinition){
+            this.securityDefinitions.put(name, schemeDefinition);
+            return this;
+        }
         public SwaggerDocBuilder addIgnoreParamNames(String... paramNames) {
             if (paramNames != null)
                 for (String paramName : paramNames) {
@@ -140,6 +151,7 @@ public class SwaggerDoc {
             swaggerDoc.host = this.host;
             swaggerDoc.doc = this.doc;
             swaggerDoc.ignoreControllers = this.ignoreControllers;
+            swaggerDoc.securityDefinitions = this.securityDefinitions;
             return swaggerDoc;
         }
     }
