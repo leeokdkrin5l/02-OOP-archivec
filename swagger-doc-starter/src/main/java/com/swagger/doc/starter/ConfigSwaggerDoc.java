@@ -1,8 +1,11 @@
-package com.swagger.doc.core;
+package com.swagger.doc.starter;
 
-import com.swagger.doc.core.properties.ConfigProperties;
+import com.swagger.doc.core.SwaggerController;
+import com.swagger.doc.core.SwaggerSourceParse;
+import com.swagger.doc.core.entity.SwaggerConfigProperties;
+import com.swagger.doc.starter.properties.ConfigProperties;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +25,7 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties(ConfigProperties.class)
 public class ConfigSwaggerDoc implements ImportAware, BeanClassLoaderAware {
-    @Autowired
-    private ConfigProperties configProperties;
-    private ClassLoader      classLoader;
+    private ClassLoader classLoader;
 
     @Bean
     public SwaggerSourceParse swaggerSourceParse() {
@@ -36,22 +37,28 @@ public class ConfigSwaggerDoc implements ImportAware, BeanClassLoaderAware {
         return new SwaggerController();
     }
 
-    @Override
+
     public void setBeanClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
 
     }
 
-    @Override
+    @Bean
+    public SwaggerConfigProperties swaggerConfigProperties(ConfigProperties configProperties) {
+        SwaggerConfigProperties swaggerConfigProperties = new SwaggerConfigProperties();
+        BeanUtils.copyProperties(configProperties, swaggerConfigProperties);
+        return swaggerConfigProperties;
+    }
+
     public void setImportMetadata(AnnotationMetadata annotationMetadata) {
         Map<String, Object> enableAttrMap = annotationMetadata
-            .getAnnotationAttributes(EnableSwaggerDoc.class.getName());
+                .getAnnotationAttributes(EnableSwaggerDoc.class.getName());
         AnnotationAttributes enableAttrs = AnnotationAttributes.fromMap(enableAttrMap);
         if (enableAttrs == null) {
             // search parent classes
             Class<?> currentClass = ClassUtils.resolveClassName(annotationMetadata.getClassName(), classLoader);
             for (Class<?> classToInspect = currentClass; classToInspect != null; classToInspect = classToInspect
-                .getSuperclass()) {
+                    .getSuperclass()) {
                 EnableSwaggerDoc enableDemo = AnnotationUtils.findAnnotation(classToInspect, EnableSwaggerDoc.class);
                 if (enableDemo == null) {
                     continue;
@@ -60,6 +67,5 @@ public class ConfigSwaggerDoc implements ImportAware, BeanClassLoaderAware {
                 enableAttrs = AnnotationAttributes.fromMap(enableAttrMap);
             }
         }
-        //        this.closeProfiles = enableAttrs.getStringArray("closeProfiles");
     }
 }

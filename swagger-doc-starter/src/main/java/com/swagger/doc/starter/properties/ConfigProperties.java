@@ -1,4 +1,4 @@
-package com.swagger.doc.core.properties;
+package com.swagger.doc.starter.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

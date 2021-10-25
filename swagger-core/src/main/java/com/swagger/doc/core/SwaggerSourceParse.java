@@ -1,7 +1,7 @@
 package com.swagger.doc.core;
 
+import com.swagger.doc.core.entity.SwaggerConfigProperties;
 import com.swagger.doc.core.entity.WrapSwagger;
-import com.swagger.doc.core.properties.ConfigProperties;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SourceReader;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class SwaggerSourceParse {
     private Logger              logger      = LoggerFactory.getLogger(getClass());
     @Autowired
-    private ConfigProperties    configProperties;
+    private SwaggerConfigProperties configProperties;
     private static final String DEFAULT_DIR = "source";
 
     public WrapSwagger parseJarSource(ApplicationContext configurableApplicationContext) {
