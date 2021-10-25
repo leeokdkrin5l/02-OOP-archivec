@@ -4,9 +4,12 @@ import io.swagger.models.Info;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import io.swagger.models.auth.SecuritySchemeDefinition;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -20,13 +23,25 @@ public class SwaggerDoc {
     private Info         info;
     private String       host;
     private String       basePath;
-    private Map<String, SecuritySchemeDefinition> securityDefinitions;
-    public void setSecurityDefinitions(Map<String, SecuritySchemeDefinition> securityDefinitions){
-        this.securityDefinitions = securityDefinitions;
+    private List<String> authHeaders;
+    private List<String> commonParams;
+
+    public List<String> getCommonParams() {
+        return commonParams;
     }
-    public Map<String, SecuritySchemeDefinition> getSecurityDefinitions() {
-        return securityDefinitions;
+
+    public void setCommonParams(List<String> commonParams) {
+        this.commonParams = commonParams;
     }
+
+    public List<String> getAuthHeaders() {
+        return authHeaders;
+    }
+
+    public void setAuthHeaders(List<String> authHeaders) {
+        this.authHeaders = authHeaders;
+    }
+
     public List<String> getIgnoreControllers() {
         return ignoreControllers;
     }
@@ -91,7 +106,9 @@ public class SwaggerDoc {
         private Info         info;
         private String       host;
         private String       basePath;
-        private Map<String, SecuritySchemeDefinition> securityDefinitions = new HashMap<>(); 
+        private Set<String>  authHeaders       = new HashSet<>();
+        private Set<String>  commonParams      = new HashSet<>();
+
         public SwaggerDocBuilder() {
         }
 
@@ -99,10 +116,23 @@ public class SwaggerDoc {
             this.doc = doc;
             return this;
         }
-        public SwaggerDocBuilder addSecurityDefinitions(String name,SecuritySchemeDefinition schemeDefinition){
-            this.securityDefinitions.put(name, schemeDefinition);
+        public SwaggerDocBuilder withCommonParams(String... names) {
+            if (names != null) {
+                for (String name : names) {
+                    this.commonParams.add(name);
+                }
+            }
             return this;
         }
+        public SwaggerDocBuilder withAuthHeader(String... names) {
+            if (names != null) {
+                for (String name : names) {
+                    this.authHeaders.add(name);
+                }
+            }
+            return this;
+        }
+
         public SwaggerDocBuilder addIgnoreParamNames(String... paramNames) {
             if (paramNames != null)
                 for (String paramName : paramNames) {
@@ -151,7 +181,8 @@ public class SwaggerDoc {
             swaggerDoc.host = this.host;
             swaggerDoc.doc = this.doc;
             swaggerDoc.ignoreControllers = this.ignoreControllers;
-            swaggerDoc.securityDefinitions = this.securityDefinitions;
+            swaggerDoc.authHeaders = this.authHeaders.stream().collect(Collectors.toList());
+            swaggerDoc.commonParams = this.commonParams.stream().collect(Collectors.toList());
             return swaggerDoc;
         }
     }

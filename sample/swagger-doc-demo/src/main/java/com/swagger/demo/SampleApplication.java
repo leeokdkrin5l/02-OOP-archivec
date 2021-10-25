@@ -46,7 +46,7 @@ public class SampleApplication {
         info.setDescription("swagger-doc解决了springfox用注解污染代码的问题，采用原生java-doc来实现文档的生成，让代码更加干净，学习成本更低");
         info.setContact(contact);
         return new SwaggerDoc.SwaggerDocBuilder().addSkipAnnotations(SessionAttribute.class).withDoc("doc")
-            .withDoc("测试文档").withInfo(info).withHost("139.224.35.224")
+            .withDoc("测试文档").withInfo(info).withHost("139.224.35.224").withCommonParams("appId")
             .addIgnoreControllers("swaggerController", "basicErrorController").build();
     }
 

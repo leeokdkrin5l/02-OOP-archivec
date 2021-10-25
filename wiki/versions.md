@@ -1,3 +1,7 @@
+
+## 1.2.3
+增加authorizations支持，自定义header
+增加通用params
 ## 1.2.2 
 1.支持按照包名忽略Controller,并且兼容Spring bean name
 

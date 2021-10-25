@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.models.SecurityRequirement;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.In;
+import io.swagger.models.auth.SecuritySchemeDefinition;
+import io.swagger.models.parameters.QueryParameter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -29,7 +34,6 @@ import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.CookieParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
@@ -39,6 +43,7 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.refs.GenericRef;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+
 /**
  * Created by IntelliJ IDEA.
  * User: wk
@@ -59,16 +64,6 @@ public class SpringNewDocReader extends AbstractDocReader {
         List<String> ignoreController = swaggerDoc.getIgnoreControllers();
         readControllerList(configurableApplicationContext, ignoreController);
         fixSwagger();
-        this.swagger.setSecurityDefinitions(this.swaggerDoc.getSecurityDefinitions());
-        // ParameterBuilder parameterBuilder = new ParameterBuilder();
-        // Parameter parameter =parameterBuilder.name("Authentication").description("token")
-        // .modelRef(new ModelRef("string")).required(false).parameterType("header").build();
-        Map<String,Parameter> parameters = new HashMap<>();
-        CookieParameter cookieParameter = new CookieParameter();
-        cookieParameter.setType("string");
-        cookieParameter.setDefaultValue("tet=123");
-        parameters.put("Cookie", cookieParameter);
-        this.swagger.setParameters(parameters);
         return swagger;
     }
 
@@ -76,6 +71,40 @@ public class SpringNewDocReader extends AbstractDocReader {
         swagger.setBasePath(swaggerDoc.getBasePath());
         swagger.setInfo(swaggerDoc.getInfo());
         swagger.setHost(swaggerDoc.getHost());
+        List<Parameter> parameterList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(swaggerDoc.getCommonParams())) {
+            for (String s : swaggerDoc.getCommonParams()) {
+                QueryParameter queryParameter = new QueryParameter();
+                queryParameter.setName(s);
+                parameterList.add(queryParameter);
+            }
+        }
+
+        List<Map<String, List<String>>> authMapList = new ArrayList<>();
+        if (swaggerDoc.getAuthHeaders() != null) {
+            Map<String, List<String>> map = new HashMap<>();
+            Map<String, SecuritySchemeDefinition> apiKeyAuthDefinitionMap = new HashMap<>();
+            for (String header : swaggerDoc.getAuthHeaders()) {
+                ApiKeyAuthDefinition apiKeyAuthDefinition = new ApiKeyAuthDefinition(header, In.HEADER);
+                apiKeyAuthDefinitionMap.put(header, apiKeyAuthDefinition);
+                map.put(header, new ArrayList<>());
+            }
+            authMapList.add(map);
+            this.swagger.setSecurityDefinitions(apiKeyAuthDefinitionMap);
+            this.swagger.getPaths().forEach((k, v) -> {
+                List<Operation> operations = v.getOperations();
+                if (!CollectionUtils.isEmpty(operations)) {
+                    for (int i = 0; i < operations.size(); i++) {
+                        Operation operation = operations.get(i);
+                        operation.setSecurity(authMapList);
+                        for (Parameter parameter : parameterList) {
+                            operation.addParameter(parameter);
+                        }
+                    }
+                }
+            });
+
+        }
     }
 
     private void readControllerList(ApplicationContext configurableApplicationContext, List<String> ingnoreController) {
@@ -186,6 +215,12 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
+                //                List<Map<String,List<String>>> mapList = new ArrayList<>();
+                //                Map<String,List<String>> map = new HashMap<>();
+                //                map.put("ticket",new ArrayList<>());
+                //                map.put("Cookie",new ArrayList<>());
+                //                mapList.add(map);
+                //                operation.setSecurity(mapList);
                 operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
@@ -248,16 +283,19 @@ public class SpringNewDocReader extends AbstractDocReader {
             }
             //判断该参数是否是body对象
             if (SpringAnnotationUtils.isRequestBody(parameter)) {
-                parameterList.addAll(bodyParse.parseParameter(parameter, javaMethod, method, name,
-                    paraMaterNameMap.get(i), classJavaClassMap));
+                parameterList.addAll(bodyParse
+                        .parseParameter(parameter, javaMethod, method, name, paraMaterNameMap.get(i),
+                                classJavaClassMap));
             } else {
                 //如果是path param
                 if (SpringAnnotationUtils.isPathParam(parameter)) {
-                    parameterList.addAll(pathParse.parseParameter(parameter, javaMethod, method, name,
-                        paraMaterNameMap.get(i), classJavaClassMap));
+                    parameterList.addAll(pathParse
+                            .parseParameter(parameter, javaMethod, method, name, paraMaterNameMap.get(i),
+                                    classJavaClassMap));
                 } else {
-                    parameterList.addAll(queryParse.parseParameter(parameter, javaMethod, method, name,
-                        paraMaterNameMap.get(i), classJavaClassMap));
+                    parameterList.addAll(queryParse
+                            .parseParameter(parameter, javaMethod, method, name, paraMaterNameMap.get(i),
+                                    classJavaClassMap));
                 }
 
             }
@@ -307,7 +345,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                 JavaSourceUtils.readClassFieldDoc(stringModelEntry.getValue(), javaClass);
             name = stringModelEntry.getKey();
             for (Map.Entry<String, Property> stringPropertyEntry : stringModelEntry.getValue().getProperties()
-                .entrySet()) {
+                    .entrySet()) {
                 if (stringPropertyEntry.getValue() instanceof RefProperty) {
                     RefProperty property = (RefProperty) stringPropertyEntry.getValue();
                     //拿到该字段对应的类
@@ -334,7 +372,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                             typeName = p.getTypeName();
                         } else {
                             typeName = ((ParameterizedTypeImpl) field.getGenericType()).getActualTypeArguments()[0]
-                                .getTypeName();
+                                    .getTypeName();
                         }
 
                         Type type = stringClassMap.get(typeName);
@@ -406,7 +444,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                                 if (type instanceof ParameterizedTypeImpl) {
                                     ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
                                     readModelMap(parameterizedType.getActualTypeArguments()[0], classJavaClassMap
-                                        .get(parameterizedType.getActualTypeArguments()[0].getTypeName()));
+                                            .get(parameterizedType.getActualTypeArguments()[0].getTypeName()));
                                 }
                             } catch (NoSuchFieldException e) {
                                 logger.warn("", e);
