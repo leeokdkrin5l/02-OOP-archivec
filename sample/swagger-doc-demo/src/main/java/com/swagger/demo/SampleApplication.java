@@ -1,7 +1,7 @@
 package com.swagger.demo;
 
-import com.swagger.doc.core.EnableSwaggerDoc;
 import com.swagger.doc.core.entity.SwaggerDoc;
+import com.swagger.doc.starter.EnableSwaggerDoc;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import org.springframework.boot.SpringApplication;

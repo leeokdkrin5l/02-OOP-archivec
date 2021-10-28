@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.swagger.models.SecurityRequirement;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
 import io.swagger.models.auth.SecuritySchemeDefinition;
@@ -46,7 +45,7 @@ import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 /**
  * Created by IntelliJ IDEA.
- * User: wk
+ * @author  wk
  * Date: 2017-05-02 上午9:47
  */
 public class SpringNewDocReader extends AbstractDocReader {
@@ -215,15 +214,8 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
-                //                List<Map<String,List<String>>> mapList = new ArrayList<>();
-                //                Map<String,List<String>> map = new HashMap<>();
-                //                map.put("ticket",new ArrayList<>());
-                //                map.put("Cookie",new ArrayList<>());
-                //                mapList.add(map);
-                //                operation.setSecurity(mapList);
                 operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
-                //swagger.path(SpringAnnotationUtils.getControllerPath(clazz) + s, path);
                 paths.put(url, path);
 
             }
@@ -234,8 +226,9 @@ public class SpringNewDocReader extends AbstractDocReader {
 
     private Response getResponse(Type genericReturnType) {
         Response response = new Response();
-        if (genericReturnType.getTypeName().equals("void"))
+        if (StringUtils.equals(genericReturnType.getTypeName(),"void")){
             return response;
+        }
         String name = null;
         if (genericReturnType instanceof Class) {
             name = readModelMap(genericReturnType, classJavaClassMap.get(((Class) genericReturnType).getName()));

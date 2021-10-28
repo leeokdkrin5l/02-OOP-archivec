@@ -1,5 +1,7 @@
 package com.swagger.doc.core;
 
+import com.swagger.doc.core.entity.SwaggerConfigProperties;
+import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.entity.WrapSwagger;
 import com.swagger.doc.core.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SwaggerController {
     private volatile WrapSwagger wrapSwagger;
     @Autowired
-    private ApplicationContext   applicationContext;
+    private ApplicationContext applicationContext;
     @Autowired
-    private SwaggerSourceParse   swaggerSourceParse;
-
+    private SwaggerSourceParse swaggerSourceParse;
     @Autowired
-    private Environment          environment;
-
+    private SwaggerConfigProperties swaggerConfigProperties;
     @GetMapping(value = "${swagger.doc.visitPath:/swagger.json}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String swagger() {
@@ -33,4 +33,9 @@ public class SwaggerController {
         return JsonUtils.toJson(wrapSwagger);
     }
 
+    @GetMapping(value = "${swagger.doc.visitPath:/ui}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String swaggerUi() {
+        String url = swaggerConfigProperties.getHost();
+        return String.format("/static/index.html?url=%s", url);
+    }
 }

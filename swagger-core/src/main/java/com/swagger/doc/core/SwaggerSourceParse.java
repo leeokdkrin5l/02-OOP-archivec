@@ -27,39 +27,42 @@ import java.util.Map;
  * Date: 2017-07-18 上午10:14
  */
 public class SwaggerSourceParse {
-    private Logger              logger      = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private SwaggerConfigProperties configProperties;
     private static final String DEFAULT_DIR = "source";
 
     public WrapSwagger parseJarSource(ApplicationContext configurableApplicationContext) {
         String sourceDir = DEFAULT_DIR;
-        if (StringUtils.isNoneBlank(configProperties.getSourceDir()))
+        if (StringUtils.isNoneBlank(configProperties.getSourceDir())) {
             sourceDir = configProperties.getSourceDir();
+        }
         File file = null;
         if (configProperties.isUseWar()) {
             try {
                 file = new ClassPathResource(sourceDir).getFile();
-                logger.info("read file path is {}",file.getAbsolutePath());
+                logger.info("read file path is {}", file.getAbsolutePath());
             } catch (Exception e) {
                 logger.warn("", e);
                 file = new File(sourceDir);
-                logger.info("read file path is {}",file.getAbsolutePath());
+                logger.info("read file path is {}", file.getAbsolutePath());
 
             }
         } else {
             file = new File(sourceDir);
-            logger.info("read file path is {}",file.getAbsolutePath());
+            logger.info("read file path is {}", file.getAbsolutePath());
         }
         File[] files = file.listFiles();
         List<JavaClass> javaClassList = new ArrayList<>();
         if (files != null) {
             for (File file1 : files) {
-                if (file1.isDirectory())
+                if (file1.isDirectory()) {
                     continue;
+                }
                 try {
-                    if (file1.getName().lastIndexOf(".jar") < 0)
+                    if (file1.getName().lastIndexOf(".jar") < 0) {
                         continue;
+                    }
                     List<JavaClass> list = SourceReader.readFile(file1);
                     javaClassList.addAll(list);
                 } catch (IOException e) {
@@ -72,17 +75,19 @@ public class SwaggerSourceParse {
         Map<String, JavaClass> projectJavaClassMap = new HashMap<>();
         try {
             Map<String, JavaClass> javaClassMap = SourceReader
-                .transforJavaClass(SourceReader.readJavaFiles(projectFiles));
-            if (javaClassMap != null)
+                    .transforJavaClass(SourceReader.readJavaFiles(projectFiles));
+            if (javaClassMap != null) {
                 projectJavaClassMap.putAll(javaClassMap);
+            }
         } catch (IOException e) {
             logger.info("", e);
         }
         Map<String, JavaClass> javaClassMap = SourceReader.transforJavaClass(javaClassList);
-        if (javaClassMap != null)
+        if (javaClassMap != null&&javaClassMap.isEmpty()){
             projectJavaClassMap.putAll(javaClassMap);
+        }
         Swagger swagger = new SpringNewDocReader(new Swagger()).read(projectJavaClassMap,
-            configurableApplicationContext);
+                configurableApplicationContext);
         WrapSwagger wrapSwagger = new WrapSwagger();
         BeanUtils.copyProperties(swagger, wrapSwagger);
         wrapSwagger.process();

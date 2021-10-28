@@ -1,6 +1,5 @@
 package com.swagger.doc.starter;
 
-import com.swagger.doc.core.ConfigSwaggerDoc;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 

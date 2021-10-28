@@ -16,13 +16,14 @@ import java.util.stream.Collectors;
  * Date: 2017-07-14 上午10:06
  */
 public class SwaggerDoc {
-    private String       doc;
+    private String doc;
     private List<String> ignoreParamNames;
-    private List<Class>  skipAnnotations;
+    private List<Class> skipAnnotations;
     private List<String> ignoreControllers;
-    private Info         info;
-    private String       host;
-    private String       basePath;
+    private Info info;
+    private String host;
+    private boolean https;
+    private String basePath;
     private List<String> authHeaders;
     private List<String> commonParams;
 
@@ -99,15 +100,16 @@ public class SwaggerDoc {
     }
 
     public static final class SwaggerDocBuilder {
-        private String       doc;
-        private List<String> ignoreParamNames  = new ArrayList<>();
-        private List<Class>  skipAnnotations   = new ArrayList<>();
+        private String doc;
+        private List<String> ignoreParamNames = new ArrayList<>();
+        private List<Class> skipAnnotations = new ArrayList<>();
         private List<String> ignoreControllers = new ArrayList<>();
-        private Info         info;
-        private String       host;
-        private String       basePath;
-        private Set<String>  authHeaders       = new HashSet<>();
-        private Set<String>  commonParams      = new HashSet<>();
+        private Info info;
+        private String host;
+        private String basePath;
+        private boolean https;
+        private Set<String> authHeaders = new HashSet<>();
+        private Set<String> commonParams = new HashSet<>();
 
         public SwaggerDocBuilder() {
         }
@@ -116,6 +118,7 @@ public class SwaggerDoc {
             this.doc = doc;
             return this;
         }
+
         public SwaggerDocBuilder withCommonParams(String... names) {
             if (names != null) {
                 for (String name : names) {
@@ -124,6 +127,7 @@ public class SwaggerDoc {
             }
             return this;
         }
+
         public SwaggerDocBuilder withAuthHeader(String... names) {
             if (names != null) {
                 for (String name : names) {
@@ -167,6 +171,11 @@ public class SwaggerDoc {
             return this;
         }
 
+        public SwaggerDocBuilder withHttps(boolean https) {
+            this.https = https;
+            return this;
+        }
+
         public SwaggerDocBuilder withBasePath(String basePath) {
             this.basePath = basePath;
             return this;
@@ -180,6 +189,7 @@ public class SwaggerDoc {
             swaggerDoc.basePath = this.basePath;
             swaggerDoc.host = this.host;
             swaggerDoc.doc = this.doc;
+            swaggerDoc.https = this.https;
             swaggerDoc.ignoreControllers = this.ignoreControllers;
             swaggerDoc.authHeaders = this.authHeaders.stream().collect(Collectors.toList());
             swaggerDoc.commonParams = this.commonParams.stream().collect(Collectors.toList());

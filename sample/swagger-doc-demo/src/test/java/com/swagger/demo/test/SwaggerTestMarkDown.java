@@ -3,7 +3,6 @@ package com.swagger.demo.test;
 import com.swagger.demo.SampleApplication;
 import com.swagger.doc.core.SwaggerSourceParse;
 import com.swagger.doc.core.entity.WrapSwagger;
-import com.swagger.doc.core.utils.MarkDownUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class SwaggerTestMarkDown {
 
     @Test
     public void testGenerateMarkDown() {
-        WrapSwagger wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
-        MarkDownUtils.generateMarkDown("wk.md", wrapSwagger);
+//        WrapSwagger wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
+//        MarkDownUtils.generateMarkDown("wk.md", wrapSwagger);
     }
 }

@@ -13,11 +13,6 @@
     <artifactId>swagger-doc-demo</artifactId>
     <dependencies>
         <dependency>
-            <groupId>swagger-doc</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>1.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>1.5.3.RELEASE</version>
@@ -44,6 +39,16 @@
             <artifactId>spring-boot-test</artifactId>
             <version>1.5.4.RELEASE</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.gitee.largerfish</groupId>
+            <artifactId>swagger-doc-starter</artifactId>
+            <version>1.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gitee.largerfish</groupId>
+            <artifactId>swagger-doc-ui</artifactId>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
