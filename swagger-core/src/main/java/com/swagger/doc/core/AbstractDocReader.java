@@ -2,6 +2,7 @@ package com.swagger.doc.core;
 
 import java.util.Map;
 
+import com.swagger.doc.core.entity.Swagger;
 import com.swagger.doc.core.entity.SwaggerDoc;
 import com.swagger.doc.core.param.AbstractParamParse;
 import com.swagger.doc.core.param.BodyParamParse;
@@ -15,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 
 import com.thoughtworks.qdox.model.JavaClass;
 
-import io.swagger.models.Swagger;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
  */
 public abstract class AbstractDocReader {
     protected final Logger           logger          = LoggerFactory.getLogger(getClass());
-    protected Swagger                swagger;
+    protected com.swagger.doc.core.entity.Swagger swagger;
     protected static ModelConverters modelConverters = new ModelConverters();
     protected AbstractParamParse     bodyParse       = new BodyParamParse(modelConverters);
     protected AbstractParamParse     pathParse       = new PathParamParse(modelConverters);

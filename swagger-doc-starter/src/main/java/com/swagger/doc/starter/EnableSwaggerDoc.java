@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
  * Date: 2017-07-17 下午5:26
  */
 @Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@Target(value = { java.lang.annotation.ElementType.TYPE })
+@Target(value = {java.lang.annotation.ElementType.TYPE})
 @Documented
-@Import({ ConfigSwaggerDoc.class })
+@Import({ConfigSwaggerDoc.class})
 @Configuration
 public @interface EnableSwaggerDoc {
 }

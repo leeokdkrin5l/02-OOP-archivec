@@ -4,7 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Created by IntelliJ IDEA.
- * User: wk
+ *
+ * @author wk
  * Date: 2017-07-17 下午3:53
  */
 @ConfigurationProperties(prefix = "swagger.doc")
@@ -12,9 +13,8 @@ public class ConfigProperties {
     /**
      * 源码文件目录
      */
-    private String sourceDr;
+    private String sourceDir;
     private String basePath;
-    private String visitPath;
     /**
      * 是否是使用 war包部署 war包部署，会上classpath下面去查找sourceDr
      */
@@ -26,8 +26,16 @@ public class ConfigProperties {
 
     public static class Server {
         private String host;
-        private int port = 8080;
+        private String port;
         private boolean https;
+
+        public String getPort() {
+            return port;
+        }
+
+        public void setPort(String port) {
+            this.port = port;
+        }
 
         public String getHost() {
             return host;
@@ -35,14 +43,6 @@ public class ConfigProperties {
 
         public void setHost(String host) {
             this.host = host;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public void setPort(int port) {
-            this.port = port;
         }
 
         public boolean isHttps() {
@@ -70,13 +70,6 @@ public class ConfigProperties {
         this.useWar = useWar;
     }
 
-    public String getVisitPath() {
-        return visitPath;
-    }
-
-    public void setVisitPath(String visitPath) {
-        this.visitPath = visitPath;
-    }
 
     public String getBasePath() {
         return basePath;

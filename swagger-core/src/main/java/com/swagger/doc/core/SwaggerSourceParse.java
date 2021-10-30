@@ -1,11 +1,11 @@
 package com.swagger.doc.core;
 
+import com.swagger.doc.core.entity.Swagger;
 import com.swagger.doc.core.entity.SwaggerConfigProperties;
 import com.swagger.doc.core.entity.WrapSwagger;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SourceReader;
 import com.thoughtworks.qdox.model.JavaClass;
-import io.swagger.models.Swagger;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

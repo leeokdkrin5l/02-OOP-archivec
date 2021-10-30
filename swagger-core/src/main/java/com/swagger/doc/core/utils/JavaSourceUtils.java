@@ -151,7 +151,17 @@ public class JavaSourceUtils {
         }
         return desc;
     }
-
+    public static String readCustomDesc(Map<String, Map<String, String>> stringMapMap, String param){
+        Map<String, String> paramMap = stringMapMap.get(param);
+        String desc = "";
+        if (paramMap != null && param != null) {
+            for (String s : paramMap.keySet()) {
+                desc = s;
+                break;
+            }
+        }
+        return desc;
+    }
     public static Map<String, Map<String, String>> readJavaMethodParam(JavaMethod javaMethod) {
         Map<String, Map<String, String>> mapMap = new HashMap<>();
         if (javaMethod != null) {

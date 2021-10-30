@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.swagger.doc.core.process.VersionProcess;
+import io.swagger.models.*;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
 import io.swagger.models.auth.SecuritySchemeDefinition;
@@ -27,12 +29,6 @@ import com.swagger.doc.core.utils.SpringAnnotationUtils;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
@@ -49,7 +45,7 @@ import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
  * Date: 2017-05-02 上午9:47
  */
 public class SpringNewDocReader extends AbstractDocReader {
-    public SpringNewDocReader(Swagger swagger) {
+    public SpringNewDocReader(com.swagger.doc.core.entity.Swagger swagger) {
         super(swagger);
     }
 
@@ -57,7 +53,7 @@ public class SpringNewDocReader extends AbstractDocReader {
     private SwaggerDoc             swaggerDoc;
 
     @Override
-    public Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
+    public com.swagger.doc.core.entity.Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
         this.classJavaClassMap = classJavaClassMap;
         this.swaggerDoc = getSwaggerDoc(configurableApplicationContext);
         List<String> ignoreController = swaggerDoc.getIgnoreControllers();
@@ -214,6 +210,8 @@ public class SpringNewDocReader extends AbstractDocReader {
                     operation.setSummary(javaMethod.getComment());
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
+                String desc = JavaSourceUtils.readCustomDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), VersionProcess.VERSION );
+                swagger.addPathVersion(desc,url);
                 operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
                 logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
                 paths.put(url, path);

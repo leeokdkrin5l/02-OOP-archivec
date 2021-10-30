@@ -8,11 +8,6 @@
   ],
   "properties": [
     {
-      "name": "swagger.doc.host",
-      "type": "java.lang.String",
-      "sourceType": "com.swagger.doc.core.properties.ConfigProperties"
-    },
-    {
       "name": "swagger.doc.basePath",
       "type": "java.lang.String",
       "sourceType": "com.swagger.doc.core.properties.ConfigProperties"

@@ -2,7 +2,6 @@ package com.swagger.doc.core.entity;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
-import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
