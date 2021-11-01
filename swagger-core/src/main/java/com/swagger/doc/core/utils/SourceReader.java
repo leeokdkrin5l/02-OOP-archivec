@@ -16,9 +16,9 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 /**
- Created by IntelliJ IDEA.
- User: wk
- Date: 2017-03-24 下午4:33
+ * Created by IntelliJ IDEA.
+ * User: wk
+ * Date: 2017-03-24 下午4:33
  */
 public class SourceReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceReader.class);
@@ -32,11 +32,11 @@ public class SourceReader {
         JarFile jarFile = new JarFile(file);
         try {
             List<JarEntry> entryList = Collections.list(jarFile.entries()).stream()
-                .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".java"))
-                .collect(Collectors.toList());
+                    .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".java"))
+                    .collect(Collectors.toList());
             for (JarEntry jarEntry : entryList) {
                 try (InputStream in = jarFile.getInputStream(jarEntry)) {
-                    classLibraryBuilder.addSource(new InputStreamReader(in,"utf-8"));
+                    classLibraryBuilder.addSource(new InputStreamReader(in, "utf-8"));
                 }
             }
         } catch (Exception e) {
@@ -55,7 +55,11 @@ public class SourceReader {
         SortedClassLibraryBuilder classLibraryBuilder = new SortedClassLibraryBuilder();
         classLibraryBuilder.appendDefaultClassLoaders();
         for (File file : classList) {
-            classLibraryBuilder.addSource(file);
+            try {
+                classLibraryBuilder.addSource(file);
+            } catch (Exception e) {
+                LOGGER.error("", e);
+            }
 
         }
         return new ArrayList<>(classLibraryBuilder.getClassLibrary().getJavaClasses());
@@ -63,7 +67,8 @@ public class SourceReader {
     }
 
     /**
-     *  把class转换成map
+     * 把class转换成map
+     *
      * @param classList
      * @return
      */

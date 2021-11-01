@@ -33,7 +33,9 @@ public class SwaggerController {
     @GetMapping(value = "/swagger/swagger.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String swagger(String v) {
-        wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
+        if (wrapSwagger==null){
+            wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
+        }
         VersionProcess versionProcess = new VersionProcess();
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put(VersionProcess.VERSION, v);
