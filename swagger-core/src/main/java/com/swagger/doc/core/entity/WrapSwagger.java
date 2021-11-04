@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Date: 2017-05-02 下午4:53
  */
 public class WrapSwagger extends Swagger {
-    private Logger                        logger  = LoggerFactory.getLogger(WrapSwagger.class);
+    private Logger logger = LoggerFactory.getLogger(WrapSwagger.class);
     //tag存储的所有的path
     private Map<Tag, List<PathOperation>> tagPath = new HashMap<>();
 
@@ -34,10 +34,11 @@ public class WrapSwagger extends Swagger {
         try {
             List<Tag> tagString = getTags();
             Map<String, Tag> tagMap = tagString.stream()
-                .collect(Collectors.toMap(Tag::getName, o -> o, (existingValue, newValue) -> existingValue));
+                    .collect(Collectors.toMap(Tag::getName, o -> o, (existingValue, newValue) -> existingValue));
             Map<String, Path> pathMap = getPaths();
-            if (pathMap != null)
+            if (pathMap != null) {
                 pathMap.forEach((k, v) -> processPath(k, v, tagMap));
+            }
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -51,8 +52,9 @@ public class WrapSwagger extends Swagger {
                 Tag tag = tagMap.get(s);
                 if (tag != null) {
                     List<PathOperation> mapList = tagPath.get(tag);
-                    if (mapList == null)
+                    if (mapList == null) {
                         mapList = new ArrayList<>();
+                    }
                     PathOperation pathOperation = new PathOperation();
                     pathOperation.setHrefPath(k.replace("/", ""));
                     pathOperation.setRealPath(k);

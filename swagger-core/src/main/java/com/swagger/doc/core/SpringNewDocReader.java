@@ -4,13 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.swagger.doc.core.process.VersionProcess;
+import com.swagger.doc.core.utils.CollectionUtils;
 import io.swagger.models.*;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
@@ -19,7 +16,6 @@ import io.swagger.models.parameters.QueryParameter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.swagger.doc.core.entity.RequestMappingInfo;
@@ -41,7 +37,8 @@ import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 /**
  * Created by IntelliJ IDEA.
- * @author  wk
+ *
+ * @author wk
  * Date: 2017-05-02 上午9:47
  */
 public class SpringNewDocReader extends AbstractDocReader {
@@ -50,7 +47,7 @@ public class SpringNewDocReader extends AbstractDocReader {
     }
 
     private Map<String, JavaClass> classJavaClassMap;
-    private SwaggerDoc             swaggerDoc;
+    private SwaggerDoc swaggerDoc;
 
     @Override
     public com.swagger.doc.core.entity.Swagger read(Map<String, JavaClass> classJavaClassMap, ApplicationContext configurableApplicationContext) {
@@ -122,6 +119,7 @@ public class SpringNewDocReader extends AbstractDocReader {
         Map<String, Object> objectMapTmp = new HashMap<>();
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             Class clazz = entry.getValue().getClass();
+            //CGLIB动态类的支持
             if (StringUtils.indexOf(clazz.getName(), "CGLIB") > 0) {
                 String name = clazz.getName();
                 String className = StringUtils.substring(name, 0, StringUtils.indexOf(name, "$"));
@@ -129,6 +127,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     Class clazzTmp = Class.forName(className);
                     objectMapTmp.put(className, clazzTmp);
                 } catch (ClassNotFoundException e) {
+                    logger.warn("readControllerList class not find name={}", className);
                     continue;
                 }
 
@@ -160,15 +159,17 @@ public class SpringNewDocReader extends AbstractDocReader {
 
         for (Method method : methods) {
             RequestMappingInfo requestMapping = SpringAnnotationUtils.getRequestMappingInfo(method);
-            if (requestMapping == null)
+            if (requestMapping == null) {
                 continue;
+            }
             JavaMethod javaMethod = javaMethodMap.get(method.getName());
             String doc = "";
             if (javaMethod != null) {
                 doc = javaMethod.getComment();
             }
-            if (requestMapping.getValue() == null || requestMapping.getValue().length == 0)
-                requestMapping.setValue(new String[] { "" });
+            if (CollectionUtils.isEmpty(requestMapping.getValue())) {
+                requestMapping.setValue(new String[]{""});
+            }
             for (String s : requestMapping.getValue()) {
 
                 String url = SpringAnnotationUtils.getControllerPath(clazz) + s;
@@ -206,25 +207,23 @@ public class SpringNewDocReader extends AbstractDocReader {
                 }
                 operation.setTags(Arrays.asList(method.getDeclaringClass().getSimpleName()));
                 operation.addResponse("200", getResponse(method.getGenericReturnType()));
-                if (javaMethod != null)
-                    operation.setSummary(javaMethod.getComment());
+                Optional.of(javaMethod).ifPresent(o -> operation.summary(javaMethod.getComment()));
                 operation.setOperationId(operationId);
                 operation.setDescription(doc);
-                String desc = JavaSourceUtils.readCustomDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), VersionProcess.VERSION );
-                swagger.addPathVersion(desc,url);
-                operation.setDeprecated(method.getAnnotation(Deprecated.class) == null ? false : true);
-                logger.debug("tag is {} msg is {}", method.getDeclaringClass().getSimpleName(), doc);
+                String desc = JavaSourceUtils.readCustomDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), VersionProcess.VERSION);
+                swagger.addPathVersion(desc, url);
+                operation.setDeprecated(Optional.ofNullable(method.getAnnotation(Deprecated.class)).isPresent());
+                logger.debug("tag={}|msg={}", method.getDeclaringClass().getSimpleName(), doc);
                 paths.put(url, path);
 
             }
         }
-        //
         return paths;
     }
 
     private Response getResponse(Type genericReturnType) {
         Response response = new Response();
-        if (StringUtils.equals(genericReturnType.getTypeName(),"void")){
+        if (StringUtils.equals(genericReturnType.getTypeName(), "void")) {
             return response;
         }
         String name = null;
@@ -245,6 +244,7 @@ public class SpringNewDocReader extends AbstractDocReader {
 
     /**
      * 解析parameter
+     *
      * @param method
      * @param javaMethod
      * @return
@@ -311,7 +311,7 @@ public class SpringNewDocReader extends AbstractDocReader {
         if (rawType.equals(List.class)) {
             //并且是带泛型的list
             if (parameterizedType.getActualTypeArguments() != null
-                && parameterizedType.getActualTypeArguments().length > 0) {
+                    && parameterizedType.getActualTypeArguments().length > 0) {
                 for (Type type : parameterizedType.getActualTypeArguments()) {
                     if (type instanceof ParameterizedTypeImpl) {
                         name = readType(type);
@@ -332,8 +332,8 @@ public class SpringNewDocReader extends AbstractDocReader {
         }
         for (Map.Entry<String, Model> stringModelEntry : stringModelMap.entrySet()) {
             swagger.addDefinition(stringModelEntry.getKey(), stringModelEntry.getValue());
-            if (javaClass != null)
-                JavaSourceUtils.readClassFieldDoc(stringModelEntry.getValue(), javaClass);
+            JavaClass finalJavaClass = javaClass;
+            Optional.ofNullable(javaClass).ifPresent(o -> JavaSourceUtils.readClassFieldDoc(stringModelEntry.getValue(), finalJavaClass));
             name = stringModelEntry.getKey();
             for (Map.Entry<String, Property> stringPropertyEntry : stringModelEntry.getValue().getProperties()
                     .entrySet()) {
@@ -378,7 +378,7 @@ public class SpringNewDocReader extends AbstractDocReader {
 
                     logger.debug("array");
                 } else if (stringModelEntry.getValue() instanceof MapProperty) {
-                    logger.debug("map");
+                    logger.debug("map not support");
                 }
             }
         }
@@ -421,8 +421,7 @@ public class SpringNewDocReader extends AbstractDocReader {
                     return;
                 }
                 swagger.addDefinition(k, v);
-                if (javaClass != null)
-                    JavaSourceUtils.readClassFieldDoc(v, javaClass);
+                Optional.ofNullable(javaClass).ifPresent(o -> JavaSourceUtils.readClassFieldDoc(v, javaClass));
                 Map<String, Property> propertyMap = v.getProperties();
                 propertyMap.forEach((k1, v1) -> {
                     if (v1 instanceof ArrayProperty) {

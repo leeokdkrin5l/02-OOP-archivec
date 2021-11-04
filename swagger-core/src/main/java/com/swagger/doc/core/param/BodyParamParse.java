@@ -42,7 +42,7 @@ public class BodyParamParse extends AbstractParamParse {
         if (StringUtils.isEmpty(modelName)) {
             ModelImpl model = new ModelImpl();
             Property property = modelConverters.readAsProperty(parameter.getType());
-            if (property!=null){
+            if (property != null) {
                 model.addProperty(paramName, property);
                 bodyParameter.setName(paramName);
                 model.setType(property.getType());
@@ -51,7 +51,7 @@ public class BodyParamParse extends AbstractParamParse {
             }
 
             throw new IllegalArgumentException(String.format("method %s paramater %s can not use @RequestBody",
-                method.getName(), parameter.getName()));
+                    method.getName(), parameter.getName()));
         }
 
         Model model = null;
@@ -93,13 +93,15 @@ public class BodyParamParse extends AbstractParamParse {
         while (!classStack.isEmpty()) {
             Class tmp = classStack.pop();
             for (Field field : tmp.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()))
+                //如果对象里存在static字段和final字段不进行解析
+                if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
                     continue;
+                }
                 fieldMap.put(field.getName(), field);
-
             }
-            if (tmp.getSuperclass() != null)
+            if (tmp.getSuperclass() != null) {
                 classStack.push(tmp.getSuperclass());
+            }
         }
 
         return fieldMap;
