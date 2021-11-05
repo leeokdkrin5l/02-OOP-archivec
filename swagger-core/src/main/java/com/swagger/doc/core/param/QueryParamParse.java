@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,19 +45,21 @@ public class QueryParamParse extends AbstractParamParse {
                 String desc = JavaSourceUtils.readParamDesc(JavaSourceUtils.readJavaMethodParam(javaMethod), paramName);
                 parameterSwagger.setDescription(desc);
             }
-            if (isRequire(parameter))
+            if (isRequire(parameter)) {
                 parameterSwagger.setRequired(true);
-            else
+            } else {
                 parameterSwagger.setRequired(false);
+            }
             String annName = getQueryParamName(parameter);
-            if (StringUtils.isNoneBlank(annName))
+            if (StringUtils.isNoneBlank(annName)) {
                 parameterSwagger.setName(annName);
+            }
             parameterList.add(parameterSwagger);
 
         } else {
             for (Map.Entry<String, Model> modelEntry : parameterMap.entrySet()) {
                 modelEntry.getValue().getProperties()
-                    .forEach((k, v) -> parseParamMap(k, v, parameterList, classJavaClassMap, parameter));
+                        .forEach((k, v) -> parseParamMap(k, v, parameterList, classJavaClassMap, parameter));
             }
         }
         return parameterList;
@@ -68,12 +71,11 @@ public class QueryParamParse extends AbstractParamParse {
         queryParameter.setProperty(property);
         queryParameter.setName(name);
         Class clazz = (Class) parameter.getParameterizedType();
-        Field fieldClazz = FieldUtils.getDeclaredField(clazz, name,true);
+        Field fieldClazz = FieldUtils.getDeclaredField(clazz, name, true);
         JavaClass javaClass = classJavaClassMap.get(((Class) (parameter.getParameterizedType())).getName());
         if (javaClass != null) {
             JavaField field = javaClass.getFieldByName(name);
-            if (field != null)
-                queryParameter.setDescription(field.getComment());
+            Optional.ofNullable(field).ifPresent(o -> queryParameter.setDescription(field.getComment()));
         }
         if (fieldClazz != null) {
             int lengths[] = getLength(fieldClazz);

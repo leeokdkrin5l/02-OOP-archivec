@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,6 +31,7 @@ public abstract class AbstractParamParse {
 
     /**
      * 解析参数 转换成swagger的parameter
+     *
      * @param parameter
      * @return
      */
@@ -39,36 +41,42 @@ public abstract class AbstractParamParse {
 
     protected boolean isRequire(java.lang.reflect.Parameter parameter) {
         Annotation annotation = SpringAnnotationUtils.getAnnotation(parameter, RequestParam.class);
-        if (annotation == null)
+        if (annotation == null) {
             return false;
+        }
         RequestParam requestParam = (RequestParam) annotation;
         return requestParam.required();
     }
 
     protected String getQueryParamName(java.lang.reflect.Parameter parameter) {
         Annotation annotation = SpringAnnotationUtils.getAnnotation(parameter, RequestParam.class);
-        if (annotation == null)
+        if (annotation == null) {
             return null;
+        }
         RequestParam requestParam = (RequestParam) annotation;
-        if (StringUtils.isNotBlank(requestParam.name()))
+        if (StringUtils.isNotBlank(requestParam.name())) {
             return requestParam.name();
+        }
         return requestParam.value();
     }
 
     protected String getPathName(java.lang.reflect.Parameter parameter) {
         Annotation annotation = SpringAnnotationUtils.getAnnotation(parameter, PathVariable.class);
-        if (annotation == null)
+        if (annotation == null) {
             return null;
+        }
         PathVariable pathVariable = (PathVariable) annotation;
-        if (StringUtils.isNotBlank(pathVariable.name()))
+        if (StringUtils.isNotBlank(pathVariable.name())) {
             return pathVariable.name();
+        }
         return pathVariable.value();
     }
 
     public int[] getLength(Field field) {
         Annotation annotation = SpringAnnotationUtils.getFieldAnnotation(field, Length.class);
-        if (annotation == null)
+        if (annotation == null) {
             return null;
+        }
         Length length = (Length) annotation;
         int[] lengths = new int[2];
         lengths[0] = length.min();

@@ -35,10 +35,11 @@ public class PathParamParse extends AbstractParamParse {
         }
         pathParameter.setRequired(true);
         String pathName = getPathName(parameter);
-        if (StringUtils.isNotBlank(pathName))
+        if (StringUtils.isNotBlank(pathName)) {
             pathParameter.setName(pathName);
-        else
+        } else {
             pathParameter.setName(paramName);
+        }
         return Arrays.asList(pathParameter);
     }
 }

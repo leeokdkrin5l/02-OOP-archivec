@@ -3,6 +3,7 @@ package com.swagger.doc.core;
 import com.swagger.doc.core.entity.Swagger;
 import com.swagger.doc.core.entity.SwaggerConfigProperties;
 import com.swagger.doc.core.entity.WrapSwagger;
+import com.swagger.doc.core.utils.FileUtils;
 import com.swagger.doc.core.utils.JavaSourceUtils;
 import com.swagger.doc.core.utils.SourceReader;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -60,7 +61,8 @@ public class SwaggerSourceParse {
                     continue;
                 }
                 try {
-                    if (file1.getName().lastIndexOf(".jar") < 0) {
+                    //如果不是jar文件就直接跳过
+                    if (!FileUtils.isJarFile(file1)) {
                         continue;
                     }
                     List<JavaClass> list = SourceReader.readFile(file1);
@@ -83,7 +85,7 @@ public class SwaggerSourceParse {
             logger.info("", e);
         }
         Map<String, JavaClass> javaClassMap = SourceReader.transforJavaClass(javaClassList);
-        if (javaClassMap != null&&javaClassMap.isEmpty()){
+        if (javaClassMap != null && javaClassMap.isEmpty()) {
             projectJavaClassMap.putAll(javaClassMap);
         }
         Swagger swagger = new SpringNewDocReader(new Swagger()).read(projectJavaClassMap,

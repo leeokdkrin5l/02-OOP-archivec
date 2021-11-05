@@ -14,7 +14,8 @@
         <module>sample/swagger-doc-springmvc-demo</module>
         <module>swagger-doc-starter</module>
         <module>swagger-doc-ui</module>
-        <module>swagger-spring</module>
+        <module>swagger-spring-mvc</module>
+        <module>swagger-admin</module>
     </modules>
 
 

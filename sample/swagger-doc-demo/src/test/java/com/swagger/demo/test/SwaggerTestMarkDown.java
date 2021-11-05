@@ -6,6 +6,7 @@ import com.swagger.doc.core.entity.WrapSwagger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletContext;
@@ -20,7 +21,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { MockServletContext.class, SampleApplication.class })
 @WebAppConfiguration
+
 public class SwaggerTestMarkDown {
+    @Value("${msg}")
+    private String msg;
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
@@ -28,7 +32,8 @@ public class SwaggerTestMarkDown {
 
     @Test
     public void testGenerateMarkDown() {
-//        WrapSwagger wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
-//        MarkDownUtils.generateMarkDown("wk.md", wrapSwagger);
+        System.out.println(msg);
+        //        WrapSwagger wrapSwagger = swaggerSourceParse.parseJarSource(applicationContext);
+        //        MarkDownUtils.generateMarkDown("wk.md", wrapSwagger);
     }
 }

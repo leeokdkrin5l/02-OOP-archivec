@@ -1,14 +1,15 @@
 package com.swagger.doc.core.utils;
 
+import com.swagger.doc.core.entity.RequestMappingInfo;
 import com.swagger.doc.core.entity.SwaggerDoc;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.JavaMethod;
+import com.thoughtworks.qdox.model.*;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -122,6 +123,38 @@ public class JavaSourceUtils {
         return false;
     }
 
+    public static boolean isController(JavaClass javaClass) {
+        boolean controller = false;
+        for (JavaAnnotation annotation : javaClass.getAnnotations()) {
+            String fullName = annotation.getType().getPackageName() + "." + annotation.getType().getName();
+            String controllerName = Controller.class.getPackage()+"."+Controller.class.getName();
+            String restControllerName = RestController.class.getPackage()+"."+RestController.class.getName();
+            if (com.swagger.doc.core.utils.StringUtils.equals(fullName,controllerName)){
+                controller  = true;
+                break;
+            }
+            if (com.swagger.doc.core.utils.StringUtils.equals(fullName,restControllerName)){
+                controller  = true;
+                break;
+            }
+        }
+        return true;
+    }
+    public static RequestMappingInfo getControllerPath(JavaClass javaClass) {
+        RequestMappingInfo  requestMappingInfo = new RequestMappingInfo();
+        String path  = "";
+        for (JavaAnnotation annotation : javaClass.getAnnotations()) {
+            String fullName = annotation.getType().getPackageName() + "." + annotation.getType().getName();
+            String requestMappingName = RequestMapping.class.getPackage()+"."+RequestMapping.class.getName();
+            if (com.swagger.doc.core.utils.StringUtils.equals(fullName,requestMappingName)){
+//                requestMappingInfo.setConsumes();
+//                 annotation.getProperty("consumes").getParameterValue();
+                break;
+            }
+
+        }
+        return requestMappingInfo;
+    }
     public static Map<String, JavaMethod> getAllMethod(JavaClass javaClass) {
         if (javaClass == null) {
             return new HashMap<>();

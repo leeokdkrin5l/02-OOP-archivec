@@ -19,17 +19,17 @@ import com.thoughtworks.qdox.model.JavaClass;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 /**
- Created by IntelliJ IDEA.
- User: wk
- Date: 2017-03-23 下午7:07
+ * Created by IntelliJ IDEA.
+ * User: wk
+ * Date: 2017-03-23 下午7:07
  */
 public abstract class AbstractDocReader {
-    protected final Logger           logger          = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected com.swagger.doc.core.entity.Swagger swagger;
     protected static ModelConverters modelConverters = new ModelConverters();
-    protected AbstractParamParse     bodyParse       = new BodyParamParse(modelConverters);
-    protected AbstractParamParse     pathParse       = new PathParamParse(modelConverters);
-    protected AbstractParamParse     queryParse      = new QueryParamParse(modelConverters);
+    protected AbstractParamParse bodyParse = new BodyParamParse(modelConverters);
+    protected AbstractParamParse pathParse = new PathParamParse(modelConverters);
+    protected AbstractParamParse queryParse = new QueryParamParse(modelConverters);
 
     public abstract Swagger read(Map<String, JavaClass> classJavaClassMap,
                                  ApplicationContext configurableApplicationContext);
